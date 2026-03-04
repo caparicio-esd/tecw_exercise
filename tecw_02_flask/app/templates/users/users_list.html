@@ -1,0 +1,59 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Usuarios{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">👤 Usuarios</p>
+            <p class="subtitle">Miembros registrados en TecW Rocódromo</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-multiline">
+            {% for user in users %}
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <div class="has-background-grey-lighter is-flex is-align-items-center is-justify-content-center"
+                                         style="width:48px;height:48px;border-radius:50%;font-size:1.4rem;">
+                                        {{ user.avatar }}
+                                    </div>
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-6">{{ user.name }}</p>
+                                <p class="subtitle is-7 has-text-grey">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="tags mt-2">
+                            <span class="tag is-info is-light">{{ user.level }}</span>
+                            {% if user.active %}
+                            <span class="tag is-success is-light">Activo</span>
+                            {% else %}
+                            <span class="tag is-danger is-light">Inactivo</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="card-footer-item" href="/users/{{ user.id }}">Ver perfil</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="column">
+                <div class="notification is-info is-light">No hay usuarios registrados aún.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

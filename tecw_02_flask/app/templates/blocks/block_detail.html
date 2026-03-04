@@ -1,0 +1,64 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Bloque {{ block.name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧱 {{ block.name }}</p>
+            <p class="subtitle">Sector: {{ block.sector }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8">
+                <div class="box">
+                    <div class="level mb-4">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <span class="tag is-medium" style="background-color: {{ block.color }}; color: white;">
+                                    Grado: {{ block.grade }}
+                                </span>
+                            </div>
+                            <div class="level-item">
+                                <span class="tag is-medium is-light">Sector: {{ block.sector }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <p class="content">{{ block.description }}</p>
+                </div>
+            </div>
+
+            <div class="column is-4">
+                <div class="box">
+                    <p class="title is-6 mb-3">Información</p>
+                    <table class="table is-fullwidth is-size-7">
+                        <tbody>
+                            <tr><th>ID</th><td>{{ block.id }}</td></tr>
+                            <tr><th>Grado</th><td>{{ block.grade }}</td></tr>
+                            <tr><th>Sector</th><td>{{ block.sector }}</td></tr>
+                            <tr><th>Altura</th><td>{{ block.height }} m</td></tr>
+                            <tr><th>Estado</th>
+                                <td>
+                                    {% if block.active %}
+                                    <span class="tag is-success is-light">Activo</span>
+                                    {% else %}
+                                    <span class="tag is-danger is-light">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a class="button is-light is-fullwidth" href="/blocks">← Volver a bloques</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

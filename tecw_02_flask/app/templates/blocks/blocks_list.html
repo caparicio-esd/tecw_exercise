@@ -1,0 +1,47 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Bloques{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧱 Bloques</p>
+            <p class="subtitle">Explora todos nuestros sectores de boulder</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-multiline">
+            {% for block in blocks %}
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-header-title">{{ block.name }}</p>
+                        <span class="card-header-icon">
+                            <span class="tag" style="background-color: {{ block.color }}; color: white;">
+                                {{ block.grade }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="card-content">
+                        <p class="has-text-grey is-size-7 mb-2">Sector: <strong>{{ block.sector }}</strong></p>
+                        <p class="content is-size-6">{{ block.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="card-footer-item" href="/blocks/{{ block.id }}">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="column">
+                <div class="notification is-info is-light">No hay bloques registrados aún.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

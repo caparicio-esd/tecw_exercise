@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}TecW Rocódromo{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+
+    <!-- Aplicar tema ANTES de renderizar para evitar parpadeo -->
+    <script>
+        (function () {
+            var stored = localStorage.getItem('theme');
+            var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', stored || sys);
+        })();
+    </script>
+
+    <style>
+        /* ── Variables de tema ── */
+        :root {
+            --bg:           #ffffff;
+            --bg-alt:       #f5f5f5;
+            --bg-card:      #ffffff;
+            --bg-card-head: #fafafa;
+            --text:         #363636;
+            --text-muted:   #6b6b6b;
+            --border:       #dbdbdb;
+            --hr:           #dbdbdb;
+            --notif-plain-bg:   #f0f0f0;
+            --notif-plain-text: #363636;
+            --notif-info-bg:    #ebf5fb;
+            --notif-info-text:  #1b4f72;
+            --notif-ok-bg:      #eafaf1;
+            --notif-ok-text:    #145a32;
+            --table-stripe:     #fafafa;
+            --footer-bg:        #1a1a2e;
+            --footer-text:      #cccccc;
+            --footer-link:      #aaaaaa;
+            --switch-track:     rgba(255,255,255,0.25);
+            --switch-border:    rgba(255,255,255,0.4);
+        }
+
+        html[data-theme="dark"] {
+            --bg:           #0f0f13;
+            --bg-alt:       #1a1a24;
+            --bg-card:      #1e1e2a;
+            --bg-card-head: #252535;
+            --text:         #e0e0e0;
+            --text-muted:   #9a9aaa;
+            --border:       #3a3a4a;
+            --hr:           #3a3a4a;
+            --notif-plain-bg:   #252535;
+            --notif-plain-text: #e0e0e0;
+            --notif-info-bg:    #1a2a3a;
+            --notif-info-text:  #90caf9;
+            --notif-ok-bg:      #1a2e1a;
+            --notif-ok-text:    #80cc80;
+            --table-stripe:     #252535;
+            --footer-bg:        #0a0a14;
+            --footer-text:      #bbbbbb;
+            --footer-link:      #999999;
+            --switch-track:     rgba(120,120,255,0.35);
+            --switch-border:    rgba(120,120,255,0.5);
+        }
+
+        /* ── Base ── */
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* ── Títulos: Bulma los hardcodea, hay que resetearlo ── */
+        html[data-theme="dark"] .title { color: var(--text); }
+        html[data-theme="dark"] .subtitle { color: var(--text-muted); }
+
+        /* Restaurar blanco en hero sections (más specificity) */
+        html[data-theme="dark"] .hero.is-dark    .title,
+        html[data-theme="dark"] .hero.is-primary .title,
+        html[data-theme="dark"] .hero.is-climbing .title { color: #ffffff; }
+        html[data-theme="dark"] .hero.is-dark    .subtitle,
+        html[data-theme="dark"] .hero.is-primary .subtitle,
+        html[data-theme="dark"] .hero.is-climbing .subtitle { color: rgba(255,255,255,0.85); }
+
+        /* ── has-text-grey → usar variable ── */
+        html[data-theme="dark"] .has-text-grey { color: var(--text-muted) !important; }
+
+        /* ── has-background-light ── */
+        html[data-theme="dark"] .has-background-light { background-color: var(--bg-alt) !important; }
+
+        /* ── Cards ── */
+        html[data-theme="dark"] .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        html[data-theme="dark"] .card-header {
+            background-color: var(--bg-card-head);
+            border-bottom: 1px solid var(--border);
+            box-shadow: none;
+        }
+        html[data-theme="dark"] .card-header-title { color: var(--text); }
+        html[data-theme="dark"] .card-content { color: var(--text); }
+        html[data-theme="dark"] .card-footer { border-top: 1px solid var(--border); }
+        html[data-theme="dark"] .card-footer-item { border-right-color: var(--border); }
+
+        /* ── Box ── */
+        html[data-theme="dark"] .box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        html[data-theme="dark"] .box .title { color: var(--text); }
+
+        /* ── Notifications ── */
+        html[data-theme="dark"] .notification.is-light {
+            background-color: var(--notif-plain-bg);
+            color: var(--notif-plain-text);
+        }
+        html[data-theme="dark"] .notification.is-info.is-light {
+            background-color: var(--notif-info-bg);
+            color: var(--notif-info-text);
+        }
+        html[data-theme="dark"] .notification.is-success.is-light {
+            background-color: var(--notif-ok-bg);
+            color: var(--notif-ok-text);
+        }
+
+        /* ── Table ── */
+        html[data-theme="dark"] .table {
+            background-color: var(--bg-card);
+            color: var(--text);
+        }
+        html[data-theme="dark"] .table td,
+        html[data-theme="dark"] .table th { border-color: var(--border); color: var(--text); }
+        html[data-theme="dark"] .table.is-striped tbody tr:nth-child(even) td {
+            background-color: var(--table-stripe);
+        }
+
+        /* ── HR ── */
+        html[data-theme="dark"] hr { background-color: var(--hr); }
+
+        /* ── Navbar dropdown ── */
+        html[data-theme="dark"] .navbar-dropdown {
+            background-color: #252535;
+            border-top-color: #444;
+        }
+        html[data-theme="dark"] .navbar-dropdown .navbar-item { color: #dddddd; }
+        html[data-theme="dark"] .navbar-dropdown .navbar-item:hover {
+            background-color: #333348;
+            color: #ffffff;
+        }
+        /* Mobile navbar menu */
+        html[data-theme="dark"] .navbar-menu {
+            background-color: #1e1e2a;
+        }
+        html[data-theme="dark"] .navbar-menu .navbar-item,
+        html[data-theme="dark"] .navbar-menu .navbar-link { color: #dddddd; }
+
+        /* ── Hero gradiente ── */
+        .hero.is-climbing {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+        }
+        .footer a { color: var(--footer-link); }
+        .footer a:hover { color: #ffffff; }
+
+        /* ── Toggle switch ── */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+        }
+        .theme-switch input { display: none; }
+
+        .switch-track {
+            width: 38px;
+            height: 21px;
+            background: var(--switch-track);
+            border: 1px solid var(--switch-border);
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.25s, border-color 0.25s;
+            flex-shrink: 0;
+        }
+        .switch-track::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 15px;
+            height: 15px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .theme-switch input:checked ~ .switch-track::after {
+            transform: translateX(17px);
+        }
+        .switch-icon { font-size: 0.9rem; line-height: 1; }
+    </style>
+</head>
+<body>
+
+{% include 'partials/header.html' %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer py-5">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <p class="has-text-weight-bold has-text-white mb-2">TecW Rocódromo</p>
+                <p class="is-size-7">Tu espacio de escalada indoor en España.</p>
+            </div>
+            <div class="column">
+                <p class="has-text-weight-bold has-text-white mb-2">Ciudades</p>
+                <ul class="is-size-7">
+                    <li><a href="/city/madrid">Madrid</a></li>
+                    <li><a href="/city/barcelona">Barcelona</a></li>
+                </ul>
+            </div>
+            <div class="column">
+                <p class="has-text-weight-bold has-text-white mb-2">Navegación</p>
+                <ul class="is-size-7">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/about">Sobre nosotros</a></li>
+                    <li><a href="/availability">Disponibilidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr style="background-color: #333;">
+        <p class="has-text-centered is-size-7">© 2026 TecW Rocódromo · Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const html = document.documentElement;
+        const checkbox = document.getElementById('theme-checkbox');
+
+        function applyTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            if (checkbox) checkbox.checked = (theme === 'dark');
+        }
+
+        // Estado inicial (ya fue aplicado en <head>, solo sincronizar el checkbox)
+        const current = html.getAttribute('data-theme') || 'light';
+        applyTheme(current);
+
+        // Toggle
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                const next = checkbox.checked ? 'dark' : 'light';
+                localStorage.setItem('theme', next);
+                applyTheme(next);
+            });
+        }
+
+        // Burger menu móvil
+        const burger = document.querySelector('.navbar-burger');
+        const menu   = document.querySelector('.navbar-menu');
+        if (burger && menu) {
+            burger.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

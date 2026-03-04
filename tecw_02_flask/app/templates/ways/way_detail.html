@@ -1,0 +1,58 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Vía {{ way.name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-primary is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧗 {{ way.name }}</p>
+            <p class="subtitle">{{ way.type }} · {{ way.city }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8">
+                <div class="box">
+                    <div class="tags mb-4">
+                        <span class="tag is-dark is-medium">{{ way.grade }}</span>
+                        <span class="tag is-primary is-light is-medium">{{ way.type }}</span>
+                        <span class="tag is-info is-light is-medium">{{ way.city }}</span>
+                    </div>
+                    <hr>
+                    <p class="content">{{ way.description }}</p>
+                </div>
+            </div>
+
+            <div class="column is-4">
+                <div class="box">
+                    <p class="title is-6 mb-3">Ficha técnica</p>
+                    <table class="table is-fullwidth is-size-7">
+                        <tbody>
+                            <tr><th>ID</th><td>{{ way.id }}</td></tr>
+                            <tr><th>Grado</th><td>{{ way.grade }}</td></tr>
+                            <tr><th>Tipo</th><td>{{ way.type }}</td></tr>
+                            <tr><th>Longitud</th><td>{{ way.length }} m</td></tr>
+                            <tr><th>Ciudad</th><td>{{ way.city }}</td></tr>
+                            <tr><th>Estado</th>
+                                <td>
+                                    {% if way.active %}
+                                    <span class="tag is-success is-light">Activa</span>
+                                    {% else %}
+                                    <span class="tag is-danger is-light">Inactiva</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a class="button is-light is-fullwidth" href="/ways">← Volver a vías</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

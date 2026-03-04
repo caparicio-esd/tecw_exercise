@@ -1,0 +1,153 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · {{ city | capitalize }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-medium">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title is-2">🏙️ {{ city | capitalize }}</p>
+            <p class="subtitle">Rocódromo TecW en {{ city | capitalize }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div class="columns">
+            <div class="column is-8">
+                <h2 class="title is-4">Información del centro</h2>
+                <div class="content">
+                    <p>Bienvenido a nuestro rocódromo de <strong>{{ city | capitalize }}</strong>.
+                    Aquí encontrarás vías para todos los niveles, desde iniciación hasta alta dificultad.</p>
+                </div>
+
+                <div class="columns is-multiline mt-4">
+                    <div class="column is-6">
+                        <div class="notification is-info is-light">
+                            <p class="has-text-weight-bold">🕐 Horario</p>
+                            <p>Lunes – Viernes: 09:00 – 22:00</p>
+                            <p>Sábados y domingos: 10:00 – 20:00</p>
+                        </div>
+                    </div>
+                    <div class="column is-6">
+                        <div class="notification is-success is-light">
+                            <p class="has-text-weight-bold">📋 Instalaciones</p>
+                            <p>Zona de boulder</p>
+                            <p>Paredes de hasta 12m</p>
+                            <p>Vestuarios y taquillas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons mt-4">
+                    <a class="button is-primary is-medium" href="/availability">Consultar disponibilidad</a>
+                    <a class="button is-dark is-medium" href="/ways">Ver todas las vías</a>
+                    <a class="button is-dark is-medium" href="/blocks">Ver todos los bloques</a>
+                </div>
+            </div>
+
+            <div class="column is-4">
+                <div class="box">
+                    <p class="title is-5">Niveles disponibles</p>
+                    <div class="tags are-medium">
+                        <span class="tag is-success">Principiante</span>
+                        <span class="tag is-warning">Intermedio</span>
+                        <span class="tag is-danger">Avanzado</span>
+                        <span class="tag is-dark">Experto</span>
+                    </div>
+                    <hr>
+                    <p class="title is-5 mt-3">Precios</p>
+                    <table class="table is-fullwidth is-striped">
+                        <tbody>
+                            <tr><td>Entrada día</td><td class="has-text-right"><strong>12€</strong></td></tr>
+                            <tr><td>Bono 10 sesiones</td><td class="has-text-right"><strong>90€</strong></td></tr>
+                            <tr><td>Mensual</td><td class="has-text-right"><strong>40€</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Vías de la ciudad -->
+<section class="section has-background-light">
+    <div class="container">
+        <h2 class="title is-4 mb-5">🧗 Vías en {{ city | capitalize }}</h2>
+        {% if ways %}
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Grado</th>
+                        <th>Tipo</th>
+                        <th>Longitud</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for way in ways %}
+                    <tr>
+                        <td><strong>{{ way.name }}</strong></td>
+                        <td><span class="tag is-dark">{{ way.grade }}</span></td>
+                        <td>{{ way.type }}</td>
+                        <td>{{ way.length }} m</td>
+                        <td>
+                            {% if way.active %}
+                            <span class="tag is-success is-light">Activa</span>
+                            {% else %}
+                            <span class="tag is-danger is-light">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td><a class="button is-small is-link is-light" href="/ways/{{ way.id }}">Ver</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="notification is-info is-light">No hay vías registradas para esta ciudad.</div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Bloques de la ciudad -->
+<section class="section">
+    <div class="container">
+        <h2 class="title is-4 mb-5">🧱 Bloques en {{ city | capitalize }}</h2>
+        {% if blocks %}
+        <div class="columns is-multiline">
+            {% for block in blocks %}
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-header-title">{{ block.name }}</p>
+                        <span class="card-header-icon">
+                            <span class="tag" style="background-color: {{ block.color }}; color: white;">
+                                {{ block.grade }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="card-content">
+                        <p class="is-size-7 has-text-grey mb-1">Sector: <strong>{{ block.sector }}</strong> · {{ block.height }} m</p>
+                        <p class="content is-size-6">{{ block.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="card-footer-item" href="/blocks/{{ block.id }}">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="notification is-info is-light">No hay bloques registrados para esta ciudad.</div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

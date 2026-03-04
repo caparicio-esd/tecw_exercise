@@ -1,0 +1,58 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Vías{% endblock %}
+
+{% block content %}
+
+<section class="hero is-primary is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧗 Vías</p>
+            <p class="subtitle">Todas las rutas de escalada disponibles</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Grado</th>
+                        <th>Tipo</th>
+                        <th>Longitud</th>
+                        <th>Ciudad</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for way in ways %}
+                    <tr>
+                        <td class="has-text-grey is-size-7">{{ way.id }}</td>
+                        <td><strong>{{ way.name }}</strong></td>
+                        <td>
+                            <span class="tag is-dark">{{ way.grade }}</span>
+                        </td>
+                        <td>{{ way.type }}</td>
+                        <td>{{ way.length }} m</td>
+                        <td>{{ way.city }}</td>
+                        <td>
+                            <a class="button is-small is-link is-light" href="/ways/{{ way.id }}">Ver</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="notification is-info is-light">No hay vías registradas aún.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

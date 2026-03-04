@@ -1,0 +1,67 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · {{ user.name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">👤 {{ user.name }}</p>
+            <p class="subtitle">{{ user.level }} · Miembro desde {{ user.member_since }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4">
+                <div class="box has-text-centered">
+                    <div class="is-flex is-justify-content-center mb-4">
+                        <div class="has-background-grey-lighter is-flex is-align-items-center is-justify-content-center"
+                             style="width:80px;height:80px;border-radius:50%;font-size:2.5rem;">
+                            {{ user.avatar }}
+                        </div>
+                    </div>
+                    <p class="title is-5">{{ user.name }}</p>
+                    <p class="subtitle is-7 has-text-grey">{{ user.email }}</p>
+                    <div class="tags is-centered">
+                        <span class="tag is-info is-light">{{ user.level }}</span>
+                        {% if user.active %}
+                        <span class="tag is-success is-light">Activo</span>
+                        {% else %}
+                        <span class="tag is-danger is-light">Inactivo</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <a class="button is-light is-fullwidth" href="/users">← Volver a usuarios</a>
+            </div>
+
+            <div class="column is-8">
+                <div class="box">
+                    <p class="title is-6 mb-4">Información del perfil</p>
+                    <table class="table is-fullwidth is-striped">
+                        <tbody>
+                            <tr><th>ID</th><td>{{ user.id }}</td></tr>
+                            <tr><th>Nombre</th><td>{{ user.name }}</td></tr>
+                            <tr><th>Email</th><td>{{ user.email }}</td></tr>
+                            <tr><th>Nivel</th><td>{{ user.level }}</td></tr>
+                            <tr><th>Ciudad</th><td>{{ user.city }}</td></tr>
+                            <tr><th>Miembro desde</th><td>{{ user.member_since }}</td></tr>
+                            <tr><th>Sesiones totales</th><td>{{ user.sessions }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="box">
+                    <p class="title is-6 mb-3">Actividad reciente</p>
+                    <div class="notification is-light is-size-7">
+                        Próximamente: historial de sesiones y logros del escalador.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

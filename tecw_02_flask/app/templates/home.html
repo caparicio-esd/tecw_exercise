@@ -1,0 +1,87 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW Rocódromo · Inicio{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero is-climbing is-large">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <p class="title is-1 has-text-white">
+                🧗 Tu rocódromo indoor
+            </p>
+            <p class="subtitle is-4 has-text-grey-lighter mt-3">
+                Escala, supérate y disfruta en nuestras instalaciones en Madrid y Barcelona.
+            </p>
+            <div class="mt-5">
+                <a class="button is-primary is-medium mr-3" href="/availability">Ver disponibilidad</a>
+                <a class="button is-light is-medium" href="/about">Sobre nosotros</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section">
+    <div class="container">
+        <h2 class="title is-3 has-text-centered mb-6">¿Por qué TecW?</h2>
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <div class="card h-100">
+                    <div class="card-content has-text-centered">
+                        <p class="is-size-1 mb-3">🏔️</p>
+                        <p class="title is-5">Rutas para todos los niveles</p>
+                        <p class="content has-text-grey">Desde principiante hasta experto, tenemos vías diseñadas para cada escalador.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-content has-text-centered">
+                        <p class="is-size-1 mb-3">📍</p>
+                        <p class="title is-5">Dos ubicaciones</p>
+                        <p class="content has-text-grey">Estamos en Madrid y Barcelona. Encuentra el rocódromo más cercano a ti.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-content has-text-centered">
+                        <p class="is-size-1 mb-3">📅</p>
+                        <p class="title is-5">Reserva online</p>
+                        <p class="content has-text-grey">Consulta disponibilidad y reserva tu sesión fácilmente desde la web.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA ciudades -->
+<section class="section has-background-light">
+    <div class="container">
+        <h2 class="title is-3 has-text-centered mb-6">Nuestras instalaciones</h2>
+        <div class="columns">
+            <div class="column is-6">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title is-4">🏙️ Madrid</p>
+                        <p class="content has-text-grey">Centro de escalada en el corazón de Madrid con más de 50 vías de distintos grados.</p>
+                        <a class="button is-dark is-fullwidth" href="/city/madrid">Ver Madrid</a>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-6">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title is-4">🏙️ Barcelona</p>
+                        <p class="content has-text-grey">Instalaciones de primer nivel en Barcelona con zona de boulder y paredes de hasta 12m.</p>
+                        <a class="button is-dark is-fullwidth" href="/city/barcelona">Ver Barcelona</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
