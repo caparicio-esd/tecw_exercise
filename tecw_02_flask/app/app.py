@@ -12,6 +12,8 @@ app = Flask(
     static_url_path=""
 )
 
+app.secret_key = '1234'
+
 app.register_blueprint(block_bp, url_prefix="/blocks")
 app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(way_bp, url_prefix="/ways")
