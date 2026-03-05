@@ -17,7 +17,7 @@
         <div class="columns is-centered">
             <div class="column is-6">
                 <div class="box">
-                    <form action="/users" method="POST">
+                    <form action="/users" method="POST" enctype="multipart/form-data">
 
                         <div class="field">
                             <label class="label">Nombre completo</label>
@@ -93,6 +93,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="field">
+                            <label class="label">Picture</label>
+                            <div class="control">
+                                <input class="input" type="file" name="picture" required accept="image/*">
+                            </div>
+                        </div>
+
 
                         <div class="field is-grouped mt-5">
                             <div class="control">

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, request
 from ..data import USERS
+from ..handle_files import save_file
 
 users_bp = Blueprint('users', __name__, template_folder="templates", static_folder="static")
 
@@ -15,7 +16,8 @@ def new_user():
 
 
 @users_bp.route('/', methods=['POST'])
-def create_user():
+@save_file
+def create_user(picture=None):
     new_id = max(u['id'] for u in USERS) + 1
     USERS.append({
         "id":           new_id,
@@ -27,6 +29,7 @@ def create_user():
         "member_since": request.form['member_since'],
         "sessions":     0,
         "active":       True,
+        "picture":      picture,
     })
     return redirect("/users")
 
@@ -48,7 +51,8 @@ def edit_user(users_id):
 
 
 @users_bp.route('/<int:users_id>/edit', methods=['POST'])
-def update_user(users_id):
+@save_file
+def update_user(users_id, picture=None):
     idx = next((i for i, u in enumerate(USERS) if u['id'] == users_id), None)
     if idx is None:
         return render_template('404.html'), 404
@@ -59,6 +63,7 @@ def update_user(users_id):
         "level":        request.form['level'],
         "city":         request.form['city'],
         "member_since": request.form['member_since'],
+        "picture":      picture,
     })
     return redirect(f"/users/{users_id}")
 

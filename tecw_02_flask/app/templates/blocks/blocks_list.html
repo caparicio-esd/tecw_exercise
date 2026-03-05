@@ -18,6 +18,20 @@
             {% for block in blocks %}
             <div class="column is-4">
                 <div class="card">
+                    {% if block.picture %}
+                    <div style="height: 180px; overflow: hidden;">
+                        <img src="/images/{{ block.picture }}" alt="{{ block.name }}"
+                             style="width: 100%; height: 180px; object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="is-flex is-align-items-center is-justify-content-center has-background-light"
+                         style="height: 180px;">
+                        <div class="has-text-centered has-text-grey">
+                            <p style="font-size: 2.5rem;">🧱</p>
+                            <p class="is-size-7">Sin foto</p>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="card-header">
                         <p class="card-header-title">{{ block.name }}</p>
                         <span class="card-header-icon">

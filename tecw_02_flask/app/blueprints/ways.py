@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, request
 from ..data import WAYS
+from ..handle_files import save_file
 
 way_bp = Blueprint('ways', __name__, template_folder="templates", static_folder="static")
 
@@ -15,7 +16,8 @@ def new_way():
 
 
 @way_bp.route('/', methods=['POST'])
-def create_way():
+@save_file
+def create_way(picture=None):
     new_id = max(w['id'] for w in WAYS) + 1
     WAYS.append({
         "id":          new_id,
@@ -25,6 +27,7 @@ def create_way():
         "length":      int(request.form['length']),
         "city":        request.form['city'],
         "active":      True,
+        "picture":     picture,
         "description": request.form['description'],
     })
     return redirect("/ways")
@@ -47,7 +50,8 @@ def edit_way(way_id):
 
 
 @way_bp.route('/<int:way_id>/edit', methods=['POST'])
-def update_way(way_id):
+@save_file
+def update_way(way_id, picture=None):
     idx = next((i for i, w in enumerate(WAYS) if w['id'] == way_id), None)
     if idx is None:
         return render_template('404.html'), 404
@@ -59,6 +63,9 @@ def update_way(way_id):
         "city":        request.form['city'],
         "description": request.form['description'],
     })
+    # Solo actualiza la foto si se subió una nueva
+    if picture:
+        WAYS[idx]['picture'] = picture
     return redirect(f"/ways/{way_id}")
 
 

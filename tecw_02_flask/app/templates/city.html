@@ -78,37 +78,47 @@
     <div class="container">
         <h2 class="title is-4 mb-5">🧗 Vías en {{ city | capitalize }}</h2>
         {% if ways %}
-        <div class="table-container">
-            <table class="table is-fullwidth is-striped is-hoverable">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Grado</th>
-                        <th>Tipo</th>
-                        <th>Longitud</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for way in ways %}
-                    <tr>
-                        <td><strong>{{ way.name }}</strong></td>
-                        <td><span class="tag is-dark">{{ way.grade }}</span></td>
-                        <td>{{ way.type }}</td>
-                        <td>{{ way.length }} m</td>
-                        <td>
+        <div class="columns is-multiline">
+            {% for way in ways %}
+            <div class="column is-4">
+                <div class="card">
+                    {% if way.picture %}
+                    <div style="height: 180px; overflow: hidden;">
+                        <img src="/images/{{ way.picture }}" alt="{{ way.name }}"
+                             style="width: 100%; height: 180px; object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="is-flex is-align-items-center is-justify-content-center has-background-light"
+                         style="height: 180px;">
+                        <div class="has-text-centered has-text-grey">
+                            <p style="font-size: 2.5rem;">🧗</p>
+                            <p class="is-size-7">Sin foto</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-header">
+                        <p class="card-header-title">{{ way.name }}</p>
+                        <span class="card-header-icon">
+                            <span class="tag is-dark">{{ way.grade }}</span>
+                        </span>
+                    </div>
+                    <div class="card-content">
+                        <div class="tags mb-2">
+                            <span class="tag is-primary is-light">{{ way.type }}</span>
+                            <span class="tag is-light">{{ way.length }} m</span>
                             {% if way.active %}
                             <span class="tag is-success is-light">Activa</span>
                             {% else %}
                             <span class="tag is-danger is-light">Inactiva</span>
                             {% endif %}
-                        </td>
-                        <td><a class="button is-small is-link is-light" href="/ways/{{ way.id }}">Ver</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="card-footer-item" href="/ways/{{ way.id }}">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
         {% else %}
         <div class="notification is-info is-light">No hay vías registradas para esta ciudad.</div>
@@ -125,6 +135,20 @@
             {% for block in blocks %}
             <div class="column is-4">
                 <div class="card">
+                    {% if block.picture %}
+                    <div style="height: 180px; overflow: hidden;">
+                        <img src="/images/{{ block.picture }}" alt="{{ block.name }}"
+                             style="width: 100%; height: 180px; object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="is-flex is-align-items-center is-justify-content-center has-background-light"
+                         style="height: 180px;">
+                        <div class="has-text-centered has-text-grey">
+                            <p style="font-size: 2.5rem;">🧱</p>
+                            <p class="is-size-7">Sin foto</p>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="card-header">
                         <p class="card-header-title">{{ block.name }}</p>
                         <span class="card-header-icon">

@@ -22,10 +22,17 @@
                         <div class="media">
                             <div class="media-left">
                                 <figure class="image is-48x48">
+                                    {% if user.picture %}
+                                    <div class="has-background-grey-lighter is-flex is-align-items-center is-justify-content-center"
+                                         style="width:48px;height:48px;border-radius:50%;font-size:1.4rem;">
+                                        <img src="/images/{{ user.picture }}" />
+                                    </div>
+                                    {% else %}
                                     <div class="has-background-grey-lighter is-flex is-align-items-center is-justify-content-center"
                                          style="width:48px;height:48px;border-radius:50%;font-size:1.4rem;">
                                         {{ user.avatar }}
                                     </div>
+                                    {% endif %}
                                 </figure>
                             </div>
                             <div class="media-content">

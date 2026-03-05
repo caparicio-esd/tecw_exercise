@@ -14,43 +14,49 @@
 
 <section class="section">
     <div class="container">
-        <div class="table-container">
-            <table class="table is-fullwidth is-striped is-hoverable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Grado</th>
-                        <th>Tipo</th>
-                        <th>Longitud</th>
-                        <th>Ciudad</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for way in ways %}
-                    <tr>
-                        <td class="has-text-grey is-size-7">{{ way.id }}</td>
-                        <td><strong>{{ way.name }}</strong></td>
-                        <td>
-                            <span class="tag is-dark">{{ way.grade }}</span>
-                        </td>
-                        <td>{{ way.type }}</td>
-                        <td>{{ way.length }} m</td>
-                        <td>{{ way.city }}</td>
-                        <td>
-                            <a class="button is-small is-link is-light" href="/ways/{{ way.id }}">Ver</a>
-                        </td>
-                    </tr>
+        <div class="columns is-multiline">
+            {% for way in ways %}
+            <div class="column is-4">
+                <div class="card">
+                    {% if way.picture %}
+                    <div style="height: 180px; overflow: hidden;">
+                        <img src="/images/{{ way.picture }}" alt="{{ way.name }}"
+                             style="width: 100%; height: 180px; object-fit: cover;">
+                    </div>
                     {% else %}
-                    <tr>
-                        <td colspan="7">
-                            <div class="notification is-info is-light">No hay vías registradas aún.</div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    <div class="is-flex is-align-items-center is-justify-content-center has-background-light"
+                         style="height: 180px;">
+                        <div class="has-text-centered has-text-grey">
+                            <p style="font-size: 2.5rem;">🧗</p>
+                            <p class="is-size-7">Sin foto</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-header">
+                        <p class="card-header-title">{{ way.name }}</p>
+                        <span class="card-header-icon">
+                            <span class="tag is-dark">{{ way.grade }}</span>
+                        </span>
+                    </div>
+                    <div class="card-content">
+                        <div class="tags mb-2">
+                            <span class="tag is-primary is-light">{{ way.type }}</span>
+                            <span class="tag is-info is-light">{{ way.city | capitalize }}</span>
+                            <span class="tag is-light">{{ way.length }} m</span>
+                        </div>
+                        <p class="content is-size-6">{{ way.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="card-footer-item" href="/ways/{{ way.id }}">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="column">
+                <div class="notification is-info is-light">No hay vías registradas aún.</div>
+            </div>
+            {% endfor %}
+        </div>
         <div class="mt-5">
             <a class="button is-primary" href="/ways/new">+ Añadir vía</a>
         </div>

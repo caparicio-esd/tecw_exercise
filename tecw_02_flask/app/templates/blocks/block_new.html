@@ -17,7 +17,7 @@
         <div class="columns is-centered">
             <div class="column is-6">
                 <div class="box">
-                    <form action="/blocks" method="POST">
+                    <form action="/blocks" method="POST" enctype="multipart/form-data">
 
                         <div class="field">
                             <label class="label">Nombre</label>
@@ -97,6 +97,13 @@
                             <div class="control">
                                 <textarea class="textarea" name="description" rows="3"
                                     placeholder="Describe la secuencia, tipo de movimientos..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Foto <span class="has-text-grey is-size-7">(opcional)</span></label>
+                            <div class="control">
+                                <input class="input" type="file" name="picture" accept="image/*">
                             </div>
                         </div>
 
