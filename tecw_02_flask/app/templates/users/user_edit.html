@@ -1,0 +1,107 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Editar {{ user.name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">👤 Editar usuario</p>
+            <p class="subtitle">{{ user.name }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box">
+                    <form action="/users/{{ user.id }}/edit" method="POST">
+
+                        <div class="field">
+                            <label class="label">Nombre completo</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" value="{{ user.name }}" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control">
+                                <input class="input" type="email" name="email" value="{{ user.email }}" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Nivel</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="level" required>
+                                                {% for l in ['Principiante', 'Intermedio', 'Avanzado', 'Experto'] %}
+                                                <option {% if user.level == l %}selected{% endif %}>{{ l }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Ciudad</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="city" required>
+                                                <option value="Madrid" {% if user.city == 'Madrid' %}selected{% endif %}>Madrid</option>
+                                                <option value="Barcelona" {% if user.city == 'Barcelona' %}selected{% endif %}>Barcelona</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha de alta</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="member_since" value="{{ user.member_since }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Avatar (emoji)</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="avatar">
+                                                {% for a in ['🧗', '🏔️', '🌟', '⛰️', '🪨', '💪'] %}
+                                                <option {% if user.avatar == a %}selected{% endif %}>{{ a }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped mt-5">
+                            <div class="control">
+                                <button class="button is-dark" type="submit">Guardar cambios</button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-light" href="/users/{{ user.id }}">Cancelar</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

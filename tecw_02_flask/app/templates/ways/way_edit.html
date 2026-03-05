@@ -1,0 +1,107 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Editar {{ way.name }}{% endblock %}
+
+{% block content %}
+
+<section class="hero is-primary is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧗 Editar vía</p>
+            <p class="subtitle">{{ way.name }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box">
+                    <form action="/ways/{{ way.id }}/edit" method="POST">
+
+                        <div class="field">
+                            <label class="label">Nombre</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" value="{{ way.name }}" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Grado (Francia)</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="grade" required>
+                                                {% for g in ['4','5a','5b','5c','6a','6a+','6b','6b+','6c','6c+','7a','7a+','7b','7b+','7c','7c+','8a'] %}
+                                                <option {% if way.grade == g %}selected{% endif %}>{{ g }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Tipo</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="type" required>
+                                                {% for t in ['Deportiva', 'Top-rope', 'Boulder'] %}
+                                                <option {% if way.type == t %}selected{% endif %}>{{ t }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Longitud (m)</label>
+                                    <div class="control">
+                                        <input class="input" type="number" name="length" value="{{ way.length }}" min="1" max="30" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Ciudad</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="city" required>
+                                                <option value="madrid" {% if way.city == 'madrid' %}selected{% endif %}>Madrid</option>
+                                                <option value="barcelona" {% if way.city == 'barcelona' %}selected{% endif %}>Barcelona</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Descripción</label>
+                            <div class="control">
+                                <textarea class="textarea" name="description" rows="3" required>{{ way.description }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped mt-5">
+                            <div class="control">
+                                <button class="button is-primary" type="submit">Guardar cambios</button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-light" href="/ways/{{ way.id }}">Cancelar</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

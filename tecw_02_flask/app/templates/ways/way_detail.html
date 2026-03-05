@@ -49,10 +49,37 @@
                         </tbody>
                     </table>
                 </div>
-                <a class="button is-light is-fullwidth" href="/ways">← Volver a vías</a>
+
+                <div class="buttons">
+                    <a class="button is-warning is-fullwidth" href="/ways/{{ way.id }}/edit">Editar</a>
+                    <button class="button is-danger is-fullwidth" onclick="document.getElementById('modal-delete').classList.add('is-active')">Eliminar</button>
+                    <a class="button is-light is-fullwidth" href="/ways">← Volver</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Modal de confirmación de borrado -->
+<div class="modal" id="modal-delete">
+    <div class="modal-background" onclick="document.getElementById('modal-delete').classList.remove('is-active')"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">¿Eliminar vía?</p>
+            <button class="delete" aria-label="cerrar"
+                    onclick="document.getElementById('modal-delete').classList.remove('is-active')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Esta acción no se puede deshacer. ¿Seguro que quieres eliminar <strong>{{ way.name }}</strong>?</p>
+        </section>
+        <footer class="modal-card-foot" style="justify-content: flex-end;">
+            <button class="button"
+                    onclick="document.getElementById('modal-delete').classList.remove('is-active')">Cancelar</button>
+            <form action="/ways/{{ way.id }}/delete" method="POST">
+                <button class="button is-danger" type="submit">Sí, eliminar</button>
+            </form>
+        </footer>
+    </div>
+</div>
 
 {% endblock %}

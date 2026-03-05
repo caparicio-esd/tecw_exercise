@@ -1,0 +1,119 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Nuevo bloque{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧱 Nuevo bloque</p>
+            <p class="subtitle">Añade un bloque de boulder</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box">
+                    <form action="/blocks" method="POST">
+
+                        <div class="field">
+                            <label class="label">Nombre</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" placeholder="Ej: Bloque Omega" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Grado (V-scale)</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="grade" required>
+                                                <option value="">-- Selecciona --</option>
+                                                <option>V0</option>
+                                                <option>V1</option>
+                                                <option>V2</option>
+                                                <option>V3</option>
+                                                <option>V4</option>
+                                                <option>V5</option>
+                                                <option>V6</option>
+                                                <option>V7</option>
+                                                <option>V8</option>
+                                                <option>V9</option>
+                                                <option>V10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Color de la presa</label>
+                                    <div class="control">
+                                        <input class="input" type="color" name="color" value="#e74c3c" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Sector</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="sector" placeholder="Ej: A" maxlength="5" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Altura (m)</label>
+                                    <div class="control">
+                                        <input class="input" type="number" name="height" placeholder="4.0" step="0.1" min="1" max="10" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Ciudad</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="city" required>
+                                        <option value="">-- Selecciona --</option>
+                                        <option value="madrid">Madrid</option>
+                                        <option value="barcelona">Barcelona</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Descripción</label>
+                            <div class="control">
+                                <textarea class="textarea" name="description" rows="3"
+                                    placeholder="Describe la secuencia, tipo de movimientos..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped mt-5">
+                            <div class="control">
+                                <button class="button is-dark" type="submit">Crear bloque</button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-light" href="/blocks">Cancelar</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

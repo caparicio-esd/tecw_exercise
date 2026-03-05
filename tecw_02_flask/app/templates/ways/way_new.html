@@ -1,0 +1,111 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Nueva vía{% endblock %}
+
+{% block content %}
+
+<section class="hero is-primary is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">🧗 Nueva vía</p>
+            <p class="subtitle">Añade una ruta de escalada</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box">
+                    <form action="/ways" method="POST">
+
+                        <div class="field">
+                            <label class="label">Nombre</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" placeholder="Ej: La Araña" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Grado (Francia)</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="grade" required>
+                                                <option value="">-- Selecciona --</option>
+                                                {% for g in ['4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a'] %}
+                                                <option>{{ g }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Tipo</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="type" required>
+                                                <option value="">-- Selecciona --</option>
+                                                <option>Deportiva</option>
+                                                <option>Top-rope</option>
+                                                <option>Boulder</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Longitud (m)</label>
+                                    <div class="control">
+                                        <input class="input" type="number" name="length" placeholder="12" min="1" max="30" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Ciudad</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="city" required>
+                                                <option value="">-- Selecciona --</option>
+                                                <option value="madrid">Madrid</option>
+                                                <option value="barcelona">Barcelona</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Descripción</label>
+                            <div class="control">
+                                <textarea class="textarea" name="description" rows="3"
+                                    placeholder="Describe el estilo, la llave, el tipo de movimientos..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped mt-5">
+                            <div class="control">
+                                <button class="button is-primary" type="submit">Crear vía</button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-light" href="/ways">Cancelar</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'blocks/layout.html' %}
+{% block title %}TecW · Nuevo usuario{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">👤 Nuevo usuario</p>
+            <p class="subtitle">Registra un nuevo miembro</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box">
+                    <form action="/users" method="POST">
+
+                        <div class="field">
+                            <label class="label">Nombre completo</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" placeholder="Ej: María López" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control">
+                                <input class="input" type="email" name="email" placeholder="maria@tecw.es" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Nivel</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="level" required>
+                                                <option value="">-- Selecciona --</option>
+                                                <option>Principiante</option>
+                                                <option>Intermedio</option>
+                                                <option>Avanzado</option>
+                                                <option>Experto</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Ciudad</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="city" required>
+                                                <option value="">-- Selecciona --</option>
+                                                <option value="Madrid">Madrid</option>
+                                                <option value="Barcelona">Barcelona</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha de alta</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="member_since" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Avatar (emoji)</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="avatar">
+                                                <option value="🧗">🧗 Escalador</option>
+                                                <option value="🏔️">🏔️ Montaña</option>
+                                                <option value="🌟">🌟 Estrella</option>
+                                                <option value="⛰️">⛰️ Cumbre</option>
+                                                <option value="🪨">🪨 Roca</option>
+                                                <option value="💪">💪 Fuerza</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped mt-5">
+                            <div class="control">
+                                <button class="button is-dark" type="submit">Crear usuario</button>
+                            </div>
+                            <div class="control">
+                                <a class="button is-light" href="/users">Cancelar</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
