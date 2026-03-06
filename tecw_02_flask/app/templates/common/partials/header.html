@@ -20,6 +20,11 @@
                         <a class="navbar-item" href="/city/barcelona">Barcelona</a>
                     </div>
                 </div>
+                {% if session.get('user') %}
+                <a class="navbar-item" href="/ways">Vías</a>
+                <a class="navbar-item" href="/blocks">Bloques</a>
+                <a class="navbar-item" href="/users">Usuarios</a>
+                {% endif %}
             </div>
             <div class="navbar-end">
                 <!-- Toggle dark/light mode -->
@@ -31,6 +36,31 @@
                         <span class="switch-icon">🌙</span>
                     </label>
                 </div>
+                {% if session.get('user') %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="mr-2">{{ session['user'].get('avatar', '🧗') }}</span>
+                        {{ session['user'].get('name', '') }}
+                    </a>
+                    <div class="navbar-dropdown is-right">
+                        <a class="navbar-item" href="/users/{{ session['user']['id'] }}">Mi perfil</a>
+                        <hr class="navbar-divider">
+                        <form action="/auth/logout" method="GET">
+                            <button class="navbar-item has-text-danger"
+                                    style="background:none;border:none;width:100%;text-align:left;cursor:pointer;">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light is-small" href="/auth/login">Iniciar sesión</a>
+                        <a class="button is-primary is-small" href="/auth/register">Registrarse</a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

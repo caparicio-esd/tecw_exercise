@@ -1,0 +1,64 @@
+{% extends 'common/layouts/main_layout.html' %}
+{% block title %}TecW · Iniciar sesión{% endblock %}
+
+{% block content %}
+
+<section class="hero is-dark is-small">
+    <div class="hero-body">
+        <div class="container">
+            <p class="title">Iniciar sesión</p>
+            <p class="subtitle">Accede a tu cuenta TecW</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-4">
+
+                {% if error %}
+                <div class="notification is-danger is-light mb-4">{{ error }}</div>
+                {% endif %}
+
+                <div class="box">
+                    <form action="/auth/login" method="POST">
+
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="email" name="email"
+                                       placeholder="tu@email.com" required autofocus>
+                                <span class="icon is-left">📧</span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Contraseña</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="password" name="password"
+                                       placeholder="••••••••" required>
+                                <span class="icon is-left">🔒</span>
+                            </div>
+                        </div>
+
+                        <div class="field mt-5">
+                            <button class="button is-dark is-fullwidth" type="submit">
+                                Entrar
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <p class="has-text-centered is-size-7 has-text-grey">
+                    ¿No tienes cuenta?
+                    <a href="/auth/register">Regístrate</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

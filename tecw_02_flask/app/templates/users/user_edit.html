@@ -16,20 +16,51 @@
     <div class="container">
         <div class="columns is-centered">
             <div class="column is-6">
+
+                {% if error %}
+                <div class="notification is-danger is-light mb-4">{{ error }}</div>
+                {% endif %}
+
                 <div class="box">
                     <form action="/users/{{ user.id }}/edit" method="POST" enctype="multipart/form-data">
 
                         <div class="field">
                             <label class="label">Nombre completo</label>
                             <div class="control">
-                                <input class="input" type="text" name="name" value="{{ user.name }}" required>
+                                <input class="input" type="text" name="name"
+                                       value="{{ user.name }}" required>
                             </div>
                         </div>
 
                         <div class="field">
                             <label class="label">Email</label>
                             <div class="control">
-                                <input class="input" type="email" name="email" value="{{ user.email }}" required>
+                                <input class="input" type="email" name="email"
+                                       value="{{ user.email }}" required>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">
+                                        Nueva contraseña
+                                        <span class="has-text-grey is-size-7">(deja vacío para no cambiarla)</span>
+                                    </label>
+                                    <div class="control">
+                                        <input class="input" type="password" name="password"
+                                               placeholder="••••••••" minlength="8">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Confirmar nueva contraseña</label>
+                                    <div class="control">
+                                        <input class="input" type="password" name="password_confirm"
+                                               placeholder="••••••••" minlength="8">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -68,7 +99,8 @@
                                 <div class="field">
                                     <label class="label">Fecha de alta</label>
                                     <div class="control">
-                                        <input class="input" type="date" name="member_since" value="{{ user.member_since }}" required>
+                                        <input class="input" type="date" name="member_since"
+                                               value="{{ user.member_since }}" required>
                                     </div>
                                 </div>
                             </div>
@@ -89,9 +121,26 @@
                         </div>
 
                         <div class="field">
-                            <label class="label">Picture</label>
+                            <label class="label">Rol</label>
                             <div class="control">
-                                <input class="input" type="file" name="picture" required accept="image/*">
+                                <div class="select is-fullwidth">
+                                    <select name="role">
+                                        <option value="user" {% if user.role == 'user' %}selected{% endif %}>Usuario</option>
+                                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Foto <span class="has-text-grey is-size-7">(deja vacío para mantener la actual)</span></label>
+                            {% if user.picture %}
+                            <figure class="image mb-2" style="max-width: 200px;">
+                                <img src="/images/{{ user.picture }}" alt="{{ user.name }}">
+                            </figure>
+                            {% endif %}
+                            <div class="control">
+                                <input class="input" type="file" name="picture" accept="image/*">
                             </div>
                         </div>
 

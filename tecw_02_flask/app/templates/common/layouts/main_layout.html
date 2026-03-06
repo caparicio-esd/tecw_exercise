@@ -6,5 +6,53 @@
 </main>
 
 {% include 'common/partials/footer.html' %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div id="toast-container"></div>
+<script>
+  (function() {
+    const toasts = {{ messages | tojson }};
+    const container = document.getElementById('toast-container');
+    const colorMap = {
+      success: { bg: '#18181b', border: '#22c55e', icon: '✓' },
+      error:   { bg: '#18181b', border: '#ef4444', icon: '✕' },
+      warning: { bg: '#18181b', border: '#f59e0b', icon: '⚠' },
+      info:    { bg: '#18181b', border: '#3b82f6', icon: 'ℹ' },
+      message: { bg: '#18181b', border: '#71717a', icon: '●' },
+    };
+    toasts.forEach(([category, message], i) => {
+      const cfg = colorMap[category] || colorMap.message;
+      const el = document.createElement('div');
+      el.style.cssText = `
+        display:flex; align-items:center; gap:10px;
+        background:${cfg.bg}; color:#fafafa;
+        border-left:3px solid ${cfg.border};
+        padding:12px 16px; border-radius:8px;
+        box-shadow:0 4px 12px rgba(0,0,0,.4);
+        font-size:.875rem; min-width:260px; max-width:360px;
+        opacity:0; transform:translateY(8px);
+        transition:opacity .2s ease, transform .2s ease;
+        margin-top:8px; cursor:pointer;
+      `;
+      el.innerHTML = `<span style="color:${cfg.border};font-weight:700">${cfg.icon}</span><span>${message}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 50 + i * 120);
+      const dismiss = () => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(() => el.remove(), 200);
+      };
+      el.addEventListener('click', dismiss);
+      setTimeout(dismiss, 4000 + i * 120);
+    });
+  })();
+</script>
+{% endif %}
+{% endwith %}
+
 {% include 'common/partials/foot.html' %}
 

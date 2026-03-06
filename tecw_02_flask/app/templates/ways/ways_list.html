@@ -57,9 +57,11 @@
             </div>
             {% endfor %}
         </div>
+        {% if session.get('user', {}).get('role') == 'admin' %}
         <div class="mt-5">
             <a class="button is-primary" href="/ways/new">+ Añadir vía</a>
         </div>
+        {% endif %}
     </div>
 </section>
 

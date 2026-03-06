@@ -1,0 +1,18 @@
+{% extends 'common/layouts/main_layout.html' %}
+
+{% block title %}404 – Página no encontrada · TecW Rocódromo{% endblock %}
+
+{% block content %}
+<section class="hero is-climbing is-fullheight-with-navbar">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <p class="is-size-1 has-text-white" style="font-weight:900; letter-spacing:-2px;">403</p>
+            <h1 class="title has-text-white mt-2">Unauthorized</h1>
+            <p class="subtitle mt-3" style="color:rgba(255,255,255,0.75);">
+                La ruta que buscas no está permitida en esta sesión.
+            </p>
+            <a href="/" class="button is-primary is-medium mt-5">Volver al inicio</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

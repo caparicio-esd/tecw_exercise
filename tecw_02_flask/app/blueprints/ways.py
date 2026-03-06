@@ -1,6 +1,8 @@
 from functools import wraps
 
 from flask import Blueprint, render_template, redirect, request, abort
+
+from ..access_control import check_role
 from ..db import db
 from ..handle_files import save_file
 from ..models import Way
@@ -36,17 +38,20 @@ def load_way(f):
 # ===================================
 
 @way_bp.route('/', methods=['GET'])
+@check_role
 def get_ways():
     ways = Way.query.all()
     return render_template('ways/ways_list.html', ways=ways)
 
 
 @way_bp.route('/new', methods=['GET'])
+@check_role
 def new_way():
     return render_template('ways/way_new.html')
 
 
 @way_bp.route('/', methods=['POST'])
+@check_role
 @save_file
 def create_way(picture=None):
     way = Way(
@@ -65,18 +70,21 @@ def create_way(picture=None):
 
 
 @way_bp.route('/<int:way_id>')
+@check_role
 @load_way
 def get_way_by_id(way):
     return render_template('ways/way_detail.html', way=way)
 
 
 @way_bp.route('/<int:way_id>/edit', methods=['GET'])
+@check_role
 @load_way
 def edit_way(way):
     return render_template('ways/way_edit.html', way=way)
 
 
 @way_bp.route('/<int:way_id>/edit', methods=['POST'])
+@check_role
 @load_way
 @save_file
 def update_way(way, picture=None):
@@ -93,6 +101,7 @@ def update_way(way, picture=None):
 
 
 @way_bp.route('/<int:way_id>/delete', methods=['POST'])
+@check_role
 @load_way
 def delete_way(way):
     db.session.delete(way)

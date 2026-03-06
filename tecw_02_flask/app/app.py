@@ -5,7 +5,7 @@ from flask import Flask, render_template, request
 from flask.cli import with_appcontext
 from flask_migrate import Migrate
 
-from .blueprints import block_bp, users_bp, way_bp, common_bp
+from .blueprints import block_bp, users_bp, way_bp, common_bp, auth_bp
 from .db import db
 from .models import User, Way, Block  # noqa: F401 — necesario para que SQLAlchemy registre los modelos
 
@@ -29,11 +29,16 @@ migrate = Migrate(app, db)
 app.register_blueprint(block_bp, url_prefix="/blocks")
 app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(way_bp, url_prefix="/ways")
+app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(common_bp, url_prefix="/")
 
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
+
+@app.errorhandler(403)
+def unauthorized(e):
+    return render_template("403.html"), 404
 
 @app.before_request
 def before_request():
@@ -51,10 +56,17 @@ def seed():
     seed_ways()
     seed_blocks()
 
+@click.command(name='reset-db')
+@with_appcontext
+def reset_db():
+    db.drop_all()
+    db.create_all()
+
 app.cli.add_command(seed)
+app.cli.add_command(reset_db)
 
 if __name__ == '__main__':
     app.run(
-        ssl_context=("certs/cert.pem", "certs/key.pem"),
+        #ssl_context=("certs/cert.pem", "certs/key.pem"),
         debug=True
     )

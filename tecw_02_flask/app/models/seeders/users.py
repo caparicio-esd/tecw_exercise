@@ -16,6 +16,7 @@ def seed_users():
             active=u['active'],
             picture=u['picture'],
         )
+        user.set_password("password")
         db.session.add(user)
     db.session.commit()
     print(f"{len(USERS)} usuarios insertados")

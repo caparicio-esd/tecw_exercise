@@ -8,12 +8,15 @@
     <script src="/javascript/theme_loader.js"></script>
     <link rel="stylesheet" href="/stylesheets/main.css">
     <link rel="shortcut icon" href="/favicon/favicon-32x32.png" type="image/x-icon">
+    <style>
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    {% for message in messages %}
-        <div class="error">{{ message }}</div>
-    {% endfor %}
-{% endif %}
-{% endwith %}

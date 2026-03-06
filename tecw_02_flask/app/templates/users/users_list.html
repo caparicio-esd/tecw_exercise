@@ -47,6 +47,9 @@
                             {% else %}
                             <span class="tag is-danger is-light">Inactivo</span>
                             {% endif %}
+                            {% if user.role == 'admin' %}
+                            <span class="tag is-warning is-light">Admin</span>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="card-footer">
@@ -60,9 +63,11 @@
             </div>
             {% endfor %}
         </div>
+        {% if session.get('user', {}).get('role') == 'admin' %}
         <div class="mt-5">
             <a class="button is-dark" href="/users/new">+ Añadir usuario</a>
         </div>
+        {% endif %}
     </div>
 </section>
 

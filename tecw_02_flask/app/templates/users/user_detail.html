@@ -43,10 +43,13 @@
                 </div>
 
                 <div class="buttons">
+                    {% set s = session.get('user', {}) %}
+                    {% if (s.get('role') == 'admin' and s.get('id') != user.id) or (s.get('role') != 'admin' and s.get('id') == user.id) %}
                     <a class="button is-warning is-fullwidth" href="/users/{{ user.id }}/edit">Editar</a>
                     <button class="button is-danger is-fullwidth"
                             onclick="document.getElementById('modal-delete').classList.add('is-active')">Eliminar
                     </button>
+                    {% endif %}
                     <a class="button is-light is-fullwidth" href="/users">← Volver</a>
                 </div>
             </div>
@@ -83,6 +86,16 @@
                         <tr>
                             <th>Sesiones totales</th>
                             <td>{{ user.sessions }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rol</th>
+                            <td>
+                                {% if user.role == 'admin' %}
+                                <span class="tag is-warning is-light">Admin</span>
+                                {% else %}
+                                <span class="tag is-light">Usuario</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         </tbody>
                     </table>

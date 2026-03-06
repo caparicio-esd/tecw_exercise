@@ -32,8 +32,8 @@ WAYS = [
 ]
 
 USERS = [
-    {"id": 1, "name": "Ana García", "email": "ana@tecw.es", "avatar": "🧗", "level": "Avanzado",
-     "city": "Madrid", "member_since": "2024-01-15", "sessions": 47, "active": True, "picture": None},
+    {"id": 1, "name": "Ana García", "email": "admin@tecw.es", "avatar": "🧗", "level": "Avanzado",
+     "city": "Madrid", "member_since": "2024-01-15", "sessions": 47, "active": True, "picture": None, "role": "admin"},
     {"id": 2, "name": "Carlos Pérez", "email": "carlos@tecw.es", "avatar": "🏔️", "level": "Intermedio",
      "city": "Barcelona", "member_since": "2024-06-03", "sessions": 22, "active": True, "picture": None},
     {"id": 3, "name": "Laura Martín", "email": "laura@tecw.es", "avatar": "🌟", "level": "Principiante",

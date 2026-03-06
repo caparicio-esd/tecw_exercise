@@ -1,3 +1,6 @@
+from sqlalchemy import Enum
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from ..db import db
 
 
@@ -14,6 +17,17 @@ class User(db.Model):
     sessions     = db.Column(db.Integer, default=0)
     active       = db.Column(db.Boolean, default=True)
     picture      = db.Column(db.String(200), nullable=True)
+    password_hash = db.Column(db.String(255), nullable=False, server_default='')
+    role = db.Column(Enum('admin', 'user', name='user_roles'), default='user')
+
 
     def __repr__(self):
         return f"<User {self.name}>"
+
+    def set_password(self, password):
+        """Genera el hash de la contraseña y lo almacena."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verifica si la contraseña ingresada es correcta."""
+        return check_password_hash(self.password_hash, password)
