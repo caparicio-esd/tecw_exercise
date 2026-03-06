@@ -2,38 +2,46 @@
 dtos/asset_dto.py — Data Transfer Objects for Asset.
 
 Classes:
-  AssetDTO       — outbound: model → JSON (camelCase)
-  CreateAssetDTO — inbound:  JSON → new model
+  AssetDTO       — outbound: model → JSON (camelCase), validated with Pydantic
+  CreateAssetDTO — inbound:  JSON → new model, validated with Pydantic
 """
 
-from dataclasses import dataclass
+from pydantic import BaseModel, ConfigDict, AnyHttpUrl, field_validator
+from pydantic.alias_generators import to_camel
 
-from .utils import camelize
 
-
-@dataclass
-class AssetDTO:
+class AssetDTO(BaseModel):
     """Outbound representation of an Asset (model → JSON)."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_camel,
+        populate_by_name=True,
+    )
 
     id:  int
     url: str
 
-    @staticmethod
-    def from_model(asset) -> dict:
+    @classmethod
+    def from_model(cls, asset) -> dict:
         """Serialize an Asset ORM instance to a camelCase dict ready for jsonify."""
-        return camelize({
-            'id':  asset.id,
-            'url': asset.url,
-        })
+        return cls.model_validate(asset).model_dump(by_alias=True)
 
 
-@dataclass
-class CreateAssetDTO:
+class CreateAssetDTO(BaseModel):
     """Inbound payload for registering a new asset (JSON → model)."""
 
-    url: str
+    model_config = ConfigDict(populate_by_name=True)
 
-    @staticmethod
-    def from_request(data: dict) -> 'CreateAssetDTO':
-        """Parse a request body dict into a CreateAssetDTO. Raises KeyError if a required field is missing."""
-        return CreateAssetDTO(url=data['url'])
+    url: AnyHttpUrl
+
+    @field_validator('url', mode='after')
+    @classmethod
+    def url_to_str(cls, v: AnyHttpUrl) -> str:
+        """Normalize the validated URL back to a plain string for the ORM."""
+        return str(v)
+
+    @classmethod
+    def from_request(cls, data: dict) -> 'CreateAssetDTO':
+        """Parse and validate a request body dict. Raises ValidationError on invalid input."""
+        return cls.model_validate(data)

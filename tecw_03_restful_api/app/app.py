@@ -10,6 +10,7 @@ import click
 from flask import Flask, jsonify
 from flask.cli import with_appcontext
 from flask_migrate import Migrate
+from pydantic import ValidationError
 
 from .blueprints.activity_records import activity_records_bp
 from .blueprints.assets import assets_bp
@@ -48,6 +49,12 @@ app.register_blueprint(activity_records_bp, url_prefix="/api/v1/activity-records
 # ---------------------------------------------------------------------------
 # Error handlers
 # ---------------------------------------------------------------------------
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e: ValidationError):
+    """Return 422 with Pydantic validation details when a DTO fails validation."""
+    return jsonify({"error": "Validation failed", "details": e.errors()}), 422
+
 
 @app.errorhandler(Exception)
 def handle_error(e):

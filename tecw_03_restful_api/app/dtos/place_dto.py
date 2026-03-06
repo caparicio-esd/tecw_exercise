@@ -2,68 +2,62 @@
 dtos/place_dto.py — Data Transfer Objects for Place.
 
 Classes:
-  PlaceDTO       — outbound: model → JSON (camelCase)
-  CreatePlaceDTO — inbound:  JSON → new model
-  UpdatePlaceDTO — inbound:  JSON → update existing model
+  PlaceDTO       — outbound: model → JSON (camelCase), validated with Pydantic
+  CreatePlaceDTO — inbound:  JSON → new model, validated with Pydantic
+  UpdatePlaceDTO — inbound:  JSON → update existing model, validated with Pydantic
 """
 
-from dataclasses import dataclass
 from typing import Optional
 
-from .utils import camelize
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 
 
-@dataclass
-class PlaceDTO:
+class PlaceDTO(BaseModel):
     """Outbound representation of a Place (model → JSON)."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_camel,
+        populate_by_name=True,
+    )
 
     id:            int
     name:          str
-    description:   Optional[str]
-    main_asset_id: Optional[int]
+    description:   Optional[str] = None
+    main_asset_id: Optional[int] = None
 
-    @staticmethod
-    def from_model(place) -> dict:
+    @classmethod
+    def from_model(cls, place) -> dict:
         """Serialize a Place ORM instance to a camelCase dict ready for jsonify."""
-        return camelize({
-            'id':            place.id,
-            'name':          place.name,
-            'description':   place.description,
-            'main_asset_id': place.main_asset_id,
-        })
+        return cls.model_validate(place).model_dump(by_alias=True)
 
 
-@dataclass
-class CreatePlaceDTO:
+class CreatePlaceDTO(BaseModel):
     """Inbound payload for creating a new place (JSON → model)."""
 
-    name:          str
+    model_config = ConfigDict(populate_by_name=True)
+
+    name:          str           = Field(min_length=1)
     description:   Optional[str] = None
     main_asset_id: Optional[int] = None
 
-    @staticmethod
-    def from_request(data: dict) -> 'CreatePlaceDTO':
-        """Parse a request body dict into a CreatePlaceDTO. Raises KeyError if a required field is missing."""
-        return CreatePlaceDTO(
-            name=data['name'],
-            description=data.get('description'),
-            main_asset_id=data.get('main_asset_id'),
-        )
+    @classmethod
+    def from_request(cls, data: dict) -> 'CreatePlaceDTO':
+        """Parse and validate a request body dict. Raises ValidationError on invalid input."""
+        return cls.model_validate(data)
 
 
-@dataclass
-class UpdatePlaceDTO:
+class UpdatePlaceDTO(BaseModel):
     """Inbound payload for updating an existing place (JSON → model)."""
 
-    name:          Optional[str] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    name:          Optional[str] = Field(default=None, min_length=1)
     description:   Optional[str] = None
     main_asset_id: Optional[int] = None
 
-    @staticmethod
-    def from_request(data: dict) -> 'UpdatePlaceDTO':
-        """Parse a request body dict into an UpdatePlaceDTO."""
-        return UpdatePlaceDTO(
-            name=data.get('name'),
-            description=data.get('description'),
-            main_asset_id=data.get('main_asset_id'),
-        )
+    @classmethod
+    def from_request(cls, data: dict) -> 'UpdatePlaceDTO':
+        """Parse and validate a request body dict. Raises ValidationError on invalid input."""
+        return cls.model_validate(data)

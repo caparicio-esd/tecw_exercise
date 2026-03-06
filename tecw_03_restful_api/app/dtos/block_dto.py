@@ -2,20 +2,33 @@
 dtos/block_dto.py — Data Transfer Objects for Block.
 
 Classes:
-  BlockDTO       — outbound: model → JSON (camelCase)
-  CreateBlockDTO — inbound:  JSON → new model
-  UpdateBlockDTO — inbound:  JSON → update existing model
+  BlockDTO       — outbound: model → JSON (camelCase), validated with Pydantic
+  CreateBlockDTO — inbound:  JSON → new model, validated with Pydantic
+  UpdateBlockDTO — inbound:  JSON → update existing model, validated with Pydantic
 """
 
-from dataclasses import dataclass
+import re
 from typing import Optional
 
-from .utils import camelize
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic.alias_generators import to_camel
+
+_VALID_GRADES = (
+    'VB', 'V0', 'V1', 'V2', 'V3', 'V4',
+    'V5', 'V6', 'V7', 'V8', 'V9', 'V10',
+    'V11', 'V12', 'V13', 'V14', 'V15', 'V16',
+)
+_HEX_COLOR_RE = re.compile(r'^#[0-9a-fA-F]{6}$')
 
 
-@dataclass
-class BlockDTO:
+class BlockDTO(BaseModel):
     """Outbound representation of a Block (model → JSON)."""
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_camel,
+        populate_by_name=True,
+    )
 
     id:            int
     name:          str
@@ -25,81 +38,80 @@ class BlockDTO:
     height:        float
     city:          str
     active:        bool
-    description:   Optional[str]
-    main_asset_id: Optional[int]
+    description:   Optional[str]  = None
+    main_asset_id: Optional[int]  = None
 
-    @staticmethod
-    def from_model(block) -> dict:
+    @classmethod
+    def from_model(cls, block) -> dict:
         """Serialize a Block ORM instance to a camelCase dict ready for jsonify."""
-        return camelize({
-            'id':            block.id,
-            'name':          block.name,
-            'grade':         block.grade,
-            'color':         block.color,
-            'sector':        block.sector,
-            'height':        block.height,
-            'city':          block.city,
-            'active':        block.active,
-            'description':   block.description,
-            'main_asset_id': block.main_asset_id,
-        })
+        return cls.model_validate(block).model_dump(by_alias=True)
 
 
-@dataclass
-class CreateBlockDTO:
+class CreateBlockDTO(BaseModel):
     """Inbound payload for creating a new block (JSON → model)."""
 
-    name:          str
+    model_config = ConfigDict(populate_by_name=True)
+
+    name:          str            = Field(min_length=1)
     grade:         str
     color:         str
-    sector:        str
-    height:        float
-    city:          str
-    active:        bool          = True
-    description:   Optional[str] = None
-    main_asset_id: Optional[int] = None
+    sector:        str            = Field(min_length=1)
+    height:        float          = Field(gt=0)
+    city:          str            = Field(min_length=1)
+    active:        bool           = True
+    description:   Optional[str]  = None
+    main_asset_id: Optional[int]  = None
 
-    @staticmethod
-    def from_request(data: dict) -> 'CreateBlockDTO':
-        """Parse a request body dict into a CreateBlockDTO. Raises KeyError if a required field is missing."""
-        return CreateBlockDTO(
-            name=data['name'],
-            grade=data['grade'],
-            color=data['color'],
-            sector=data['sector'],
-            height=data['height'],
-            city=data['city'],
-            active=data.get('active', True),
-            description=data.get('description'),
-            main_asset_id=data.get('main_asset_id'),
-        )
+    @field_validator('grade')
+    @classmethod
+    def grade_must_be_valid(cls, v: str) -> str:
+        if v not in _VALID_GRADES:
+            raise ValueError(f"grade must be one of: {', '.join(_VALID_GRADES)}")
+        return v
+
+    @field_validator('color')
+    @classmethod
+    def color_must_be_hex(cls, v: str) -> str:
+        if not _HEX_COLOR_RE.match(v):
+            raise ValueError('color must be a valid hex code (e.g. #e74c3c)')
+        return v
+
+    @classmethod
+    def from_request(cls, data: dict) -> 'CreateBlockDTO':
+        """Parse and validate a request body dict. Raises ValidationError on invalid input."""
+        return cls.model_validate(data)
 
 
-@dataclass
-class UpdateBlockDTO:
+class UpdateBlockDTO(BaseModel):
     """Inbound payload for updating an existing block (JSON → model)."""
 
-    name:          Optional[str]   = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    name:          Optional[str]   = Field(default=None, min_length=1)
     grade:         Optional[str]   = None
     color:         Optional[str]   = None
-    sector:        Optional[str]   = None
-    height:        Optional[float] = None
-    city:          Optional[str]   = None
+    sector:        Optional[str]   = Field(default=None, min_length=1)
+    height:        Optional[float] = Field(default=None, gt=0)
+    city:          Optional[str]   = Field(default=None, min_length=1)
     active:        Optional[bool]  = None
     description:   Optional[str]   = None
     main_asset_id: Optional[int]   = None
 
-    @staticmethod
-    def from_request(data: dict) -> 'UpdateBlockDTO':
-        """Parse a request body dict into an UpdateBlockDTO."""
-        return UpdateBlockDTO(
-            name=data.get('name'),
-            grade=data.get('grade'),
-            color=data.get('color'),
-            sector=data.get('sector'),
-            height=data.get('height'),
-            city=data.get('city'),
-            active=data.get('active'),
-            description=data.get('description'),
-            main_asset_id=data.get('main_asset_id'),
-        )
+    @field_validator('grade')
+    @classmethod
+    def grade_must_be_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v not in _VALID_GRADES:
+            raise ValueError(f"grade must be one of: {', '.join(_VALID_GRADES)}")
+        return v
+
+    @field_validator('color')
+    @classmethod
+    def color_must_be_hex(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not _HEX_COLOR_RE.match(v):
+            raise ValueError('color must be a valid hex code (e.g. #e74c3c)')
+        return v
+
+    @classmethod
+    def from_request(cls, data: dict) -> 'UpdateBlockDTO':
+        """Parse and validate a request body dict. Raises ValidationError on invalid input."""
+        return cls.model_validate(data)
