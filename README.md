@@ -14,6 +14,9 @@ REST API for managing a climbing gym: sport routes (vías), bouldering problems 
 Built with **Flask + flask-openapi3 + SQLAlchemy + Pydantic**.
 
 ---
+<img src="./banner.jpg" alt="">
+
+---
 
 ## Table of contents
 
