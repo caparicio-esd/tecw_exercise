@@ -19,3 +19,4 @@ from .ways import Way
 from .blocks import Block
 from .places import Place
 from .activity_records import ActivityRecord
+from .refresh_tokens import RefreshToken

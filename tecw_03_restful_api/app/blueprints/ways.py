@@ -13,6 +13,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth
 from ..db import db
 from ..models.ways import Way
 from ..dtos.way_dto import WayDTO, CreateWayDTO, UpdateWayDTO
@@ -50,6 +51,7 @@ def get_by_id(way_id):
 
 
 @ways_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Create and persist a new way from the request body."""
     dto = CreateWayDTO.from_request(request.get_json())
@@ -69,6 +71,7 @@ def create():
 
 
 @ways_bp.route('/<int:way_id>', methods=['PUT'])
+@require_auth
 def update(way_id):
     """Replace all fields of an existing way identified by *way_id*."""
     way = Way.query.get_or_404(way_id)
@@ -86,6 +89,7 @@ def update(way_id):
 
 
 @ways_bp.route('/<int:way_id>', methods=['DELETE'])
+@require_auth
 def delete(way_id):
     """Delete the way identified by *way_id*."""
     way = Way.query.get_or_404(way_id)

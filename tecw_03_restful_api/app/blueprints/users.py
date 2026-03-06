@@ -13,6 +13,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth, require_role
 from ..db import db
 from ..models.users import User
 from ..dtos.user_dto import UserDTO, CreateUserDTO, UpdateUserDTO
@@ -50,6 +51,7 @@ def get_by_id(user_id):
 
 
 @users_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Create and persist a new user from the request body."""
     dto = CreateUserDTO.from_request(request.get_json())
@@ -71,6 +73,7 @@ def create():
 
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
+@require_auth
 def update(user_id):
     """Replace all fields of an existing user identified by *user_id*."""
     user = User.query.get_or_404(user_id)
@@ -90,6 +93,7 @@ def update(user_id):
 
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
+@require_role('admin')
 def delete(user_id):
     """Delete the user identified by *user_id*."""
     user = User.query.get_or_404(user_id)

@@ -13,6 +13,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth
 from ..db import db
 from ..models.blocks import Block
 from ..dtos.block_dto import BlockDTO, CreateBlockDTO, UpdateBlockDTO
@@ -51,6 +52,7 @@ def get_by_id(block_id):
 
 
 @blocks_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Create and persist a new block from the request body."""
     dto = CreateBlockDTO.from_request(request.get_json())
@@ -71,6 +73,7 @@ def create():
 
 
 @blocks_bp.route('/<int:block_id>', methods=['PUT'])
+@require_auth
 def update(block_id):
     """Replace all fields of an existing block identified by *block_id*."""
     block = Block.query.get_or_404(block_id)
@@ -89,6 +92,7 @@ def update(block_id):
 
 
 @blocks_bp.route('/<int:block_id>', methods=['DELETE'])
+@require_auth
 def delete(block_id):
     """Delete the block identified by *block_id*."""
     block = Block.query.get_or_404(block_id)

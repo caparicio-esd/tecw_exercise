@@ -13,6 +13,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth
 from ..db import db
 from ..models.places import Place
 from ..dtos.place_dto import PlaceDTO, CreatePlaceDTO, UpdatePlaceDTO
@@ -44,6 +45,7 @@ def get_by_id(place_id):
 
 
 @places_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Create and persist a new place from the request body."""
     dto = CreatePlaceDTO.from_request(request.get_json())
@@ -58,6 +60,7 @@ def create():
 
 
 @places_bp.route('/<int:place_id>', methods=['PUT'])
+@require_auth
 def update(place_id):
     """Replace all fields of an existing place identified by *place_id*."""
     place = Place.query.get_or_404(place_id)
@@ -70,6 +73,7 @@ def update(place_id):
 
 
 @places_bp.route('/<int:place_id>', methods=['DELETE'])
+@require_auth
 def delete(place_id):
     """Delete the place identified by *place_id*."""
     place = Place.query.get_or_404(place_id)

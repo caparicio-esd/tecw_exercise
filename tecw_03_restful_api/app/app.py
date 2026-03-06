@@ -5,6 +5,7 @@ Creates and configures the Flask app, registers blueprints,
 sets up the database, migration engine, CLI commands and error handlers.
 """
 import logging
+import os
 
 import click
 from flask import Flask, jsonify
@@ -18,8 +19,9 @@ from .blueprints.blocks import blocks_bp
 from .blueprints.places import places_bp
 from .blueprints.users import users_bp
 from .blueprints.ways import ways_bp
+from .blueprints.auth import auth_bp
 from .db import db
-from .models import User, Way, Block, Place, Asset, ActivityRecord  # noqa: F401 — registers models with SQLAlchemy
+from .models import User, Way, Block, Place, Asset, ActivityRecord, RefreshToken  # noqa: F401 — registers models with SQLAlchemy
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,6 +32,7 @@ app = Flask(
 app.secret_key = '1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tecw_api.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET'] = os.environ.get('JWT_SECRET', 'dev-insecure-secret-change-in-prod')
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -38,6 +41,7 @@ migrate = Migrate(app, db)
 # Blueprints
 # ---------------------------------------------------------------------------
 
+app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
 app.register_blueprint(blocks_bp, url_prefix="/api/v1/blocks")
 app.register_blueprint(users_bp, url_prefix="/api/v1/users")
 app.register_blueprint(ways_bp, url_prefix="/api/v1/ways")

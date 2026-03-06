@@ -15,6 +15,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth
 from ..db import db
 from ..models.assets import Asset
 from ..dtos.asset_dto import AssetDTO, CreateAssetDTO
@@ -46,6 +47,7 @@ def get_by_id(asset_id):
 
 
 @assets_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Register a new asset from the request body."""
     dto = CreateAssetDTO.from_request(request.get_json())
@@ -56,6 +58,7 @@ def create():
 
 
 @assets_bp.route('/<int:asset_id>', methods=['DELETE'])
+@require_auth
 def delete(asset_id):
     """Delete the asset identified by *asset_id*."""
     asset = Asset.query.get_or_404(asset_id)

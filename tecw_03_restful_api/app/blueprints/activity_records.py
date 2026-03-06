@@ -15,6 +15,7 @@ Routes:
 
 from flask import Blueprint, jsonify, request
 
+from ..auth.decorators import require_auth
 from ..db import db
 from ..models.activity_records import ActivityRecord
 from ..dtos.activity_record_dto import ActivityRecordDTO, CreateActivityRecordDTO
@@ -51,6 +52,7 @@ def get_by_id(activity_record_id):
 
 
 @activity_records_bp.route('', methods=['POST'])
+@require_auth
 def create():
     """Create and persist a new activity record from the request body."""
     dto = CreateActivityRecordDTO.from_request(request.get_json())
@@ -68,6 +70,7 @@ def create():
 
 
 @activity_records_bp.route('/<int:activity_record_id>', methods=['DELETE'])
+@require_auth
 def delete(activity_record_id):
     """Delete the activity record identified by *activity_record_id*."""
     record = ActivityRecord.query.get_or_404(activity_record_id)
