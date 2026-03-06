@@ -16,15 +16,30 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.users import User
 from ..dtos.user_dto import UserDTO, CreateUserDTO, UpdateUserDTO
+from .query_utils import apply_list_params
 
 users_bp = Blueprint('users', __name__)
 
 
 @users_bp.route('')
 def get_all():
-    """Return a list of all users."""
-    users = User.query.all()
-    return jsonify([UserDTO.from_model(u) for u in users])
+    """Return a paginated, filterable, sortable list of users.
+
+    Filters : name (like), email (like), role (exact), active (exact)
+    Sort by : id (default), name, level, sessions, member_since
+    """
+    items, meta = apply_list_params(
+        User,
+        User.query,
+        filterable={
+            'name':   'like',
+            'email':  'like',
+            'role':   'exact',
+            'active': 'exact',
+        },
+        sortable=['id', 'name', 'level', 'sessions', 'member_since'],
+    )
+    return jsonify({'data': [UserDTO.from_model(u) for u in items], 'pagination': meta})
 
 
 @users_bp.route('/<int:user_id>')

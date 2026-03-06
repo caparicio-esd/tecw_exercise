@@ -18,14 +18,30 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.activity_records import ActivityRecord
 from ..dtos.activity_record_dto import ActivityRecordDTO, CreateActivityRecordDTO
+from .query_utils import apply_list_params
 
 activity_records_bp = Blueprint('activity_records', __name__)
 
 
 @activity_records_bp.route('')
 def get_all():
-    """Return a list of all activity records."""
-    return jsonify([ActivityRecordDTO.from_model(r) for r in ActivityRecord.query.all()])
+    """Return a paginated, filterable, sortable list of activity records.
+
+    Filters : user_id (exact), way_id (exact), block_id (exact), date (exact)
+    Sort by : id (default), date, user_id
+    """
+    items, meta = apply_list_params(
+        ActivityRecord,
+        ActivityRecord.query,
+        filterable={
+            'user_id':  'exact',
+            'way_id':   'exact',
+            'block_id': 'exact',
+            'date':     'exact',
+        },
+        sortable=['id', 'date', 'user_id'],
+    )
+    return jsonify({'data': [ActivityRecordDTO.from_model(r) for r in items], 'pagination': meta})
 
 
 @activity_records_bp.route('/<int:activity_record_id>')

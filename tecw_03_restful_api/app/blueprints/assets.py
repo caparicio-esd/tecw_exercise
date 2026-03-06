@@ -18,14 +18,25 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.assets import Asset
 from ..dtos.asset_dto import AssetDTO, CreateAssetDTO
+from .query_utils import apply_list_params
 
 assets_bp = Blueprint('assets', __name__)
 
 
 @assets_bp.route('')
 def get_all():
-    """Return a list of all assets."""
-    return jsonify([AssetDTO.from_model(a) for a in Asset.query.all()])
+    """Return a paginated, filterable, sortable list of assets.
+
+    Filters : url (like)
+    Sort by : id (default), url
+    """
+    items, meta = apply_list_params(
+        Asset,
+        Asset.query,
+        filterable={'url': 'like'},
+        sortable=['id', 'url'],
+    )
+    return jsonify({'data': [AssetDTO.from_model(a) for a in items], 'pagination': meta})
 
 
 @assets_bp.route('/<int:asset_id>')

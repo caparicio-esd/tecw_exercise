@@ -16,14 +16,32 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.blocks import Block
 from ..dtos.block_dto import BlockDTO, CreateBlockDTO, UpdateBlockDTO
+from .query_utils import apply_list_params
 
 blocks_bp = Blueprint('blocks', __name__)
 
 
 @blocks_bp.route('')
 def get_all():
-    """Return a list of all bouldering blocks."""
-    return jsonify([BlockDTO.from_model(b) for b in Block.query.all()])
+    """Return a paginated, filterable, sortable list of blocks.
+
+    Filters : name (like), grade (exact), color (exact), sector (exact), city (exact), active (exact)
+    Sort by : id (default), name, grade, height, city
+    """
+    items, meta = apply_list_params(
+        Block,
+        Block.query,
+        filterable={
+            'name':   'like',
+            'grade':  'exact',
+            'color':  'exact',
+            'sector': 'exact',
+            'city':   'exact',
+            'active': 'exact',
+        },
+        sortable=['id', 'name', 'grade', 'height', 'city'],
+    )
+    return jsonify({'data': [BlockDTO.from_model(b) for b in items], 'pagination': meta})
 
 
 @blocks_bp.route('/<int:block_id>')

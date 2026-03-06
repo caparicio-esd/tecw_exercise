@@ -16,14 +16,31 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.ways import Way
 from ..dtos.way_dto import WayDTO, CreateWayDTO, UpdateWayDTO
+from .query_utils import apply_list_params
 
 ways_bp = Blueprint('ways', __name__)
 
 
 @ways_bp.route('')
 def get_all():
-    """Return a list of all climbing ways."""
-    return jsonify([WayDTO.from_model(w) for w in Way.query.all()])
+    """Return a paginated, filterable, sortable list of ways.
+
+    Filters : name (like), grade (exact), type (exact), city (exact), active (exact)
+    Sort by : id (default), name, grade, length, city
+    """
+    items, meta = apply_list_params(
+        Way,
+        Way.query,
+        filterable={
+            'name':   'like',
+            'grade':  'exact',
+            'type':   'exact',
+            'city':   'exact',
+            'active': 'exact',
+        },
+        sortable=['id', 'name', 'grade', 'length', 'city'],
+    )
+    return jsonify({'data': [WayDTO.from_model(w) for w in items], 'pagination': meta})
 
 
 @ways_bp.route('/<int:way_id>')

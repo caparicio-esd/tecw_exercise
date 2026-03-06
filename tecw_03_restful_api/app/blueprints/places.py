@@ -16,14 +16,25 @@ from flask import Blueprint, jsonify, request
 from ..db import db
 from ..models.places import Place
 from ..dtos.place_dto import PlaceDTO, CreatePlaceDTO, UpdatePlaceDTO
+from .query_utils import apply_list_params
 
 places_bp = Blueprint('places', __name__)
 
 
 @places_bp.route('')
 def get_all():
-    """Return a list of all gym places/sectors."""
-    return jsonify([PlaceDTO.from_model(p) for p in Place.query.all()])
+    """Return a paginated, filterable, sortable list of places.
+
+    Filters : name (like)
+    Sort by : id (default), name
+    """
+    items, meta = apply_list_params(
+        Place,
+        Place.query,
+        filterable={'name': 'like'},
+        sortable=['id', 'name'],
+    )
+    return jsonify({'data': [PlaceDTO.from_model(p) for p in items], 'pagination': meta})
 
 
 @places_bp.route('/<int:place_id>')
