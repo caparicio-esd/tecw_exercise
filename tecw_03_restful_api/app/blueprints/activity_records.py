@@ -17,6 +17,7 @@ from flask import Blueprint, jsonify, request
 
 from ..db import db
 from ..models.activity_records import ActivityRecord
+from ..dtos.activity_record_dto import ActivityRecordDTO, CreateActivityRecordDTO
 
 activity_records_bp = Blueprint('activity_records', __name__)
 
@@ -24,32 +25,30 @@ activity_records_bp = Blueprint('activity_records', __name__)
 @activity_records_bp.route('')
 def get_all():
     """Return a list of all activity records."""
-    records = ActivityRecord.query.all()
-    return jsonify([_serialize(r) for r in records])
+    return jsonify([ActivityRecordDTO.from_model(r) for r in ActivityRecord.query.all()])
 
 
 @activity_records_bp.route('/<int:activity_record_id>')
 def get_by_id(activity_record_id):
     """Return a single activity record identified by *activity_record_id*."""
-    record = ActivityRecord.query.get_or_404(activity_record_id)
-    return jsonify(_serialize(record))
+    return jsonify(ActivityRecordDTO.from_model(ActivityRecord.query.get_or_404(activity_record_id)))
 
 
 @activity_records_bp.route('', methods=['POST'])
 def create():
     """Create and persist a new activity record from the request body."""
-    data = request.get_json()
+    dto = CreateActivityRecordDTO.from_request(request.get_json())
     record = ActivityRecord(
-        user_id=data['user_id'],
-        way_id=data.get('way_id'),
-        block_id=data.get('block_id'),
-        date=data['date'],
-        notes=data.get('notes'),
-        main_asset_id=data.get('main_asset_id'),
+        user_id=dto.user_id,
+        way_id=dto.way_id,
+        block_id=dto.block_id,
+        date=dto.date,
+        notes=dto.notes,
+        main_asset_id=dto.main_asset_id,
     )
     db.session.add(record)
     db.session.commit()
-    return jsonify(_serialize(record)), 201
+    return jsonify(ActivityRecordDTO.from_model(record)), 201
 
 
 @activity_records_bp.route('/<int:activity_record_id>', methods=['DELETE'])
@@ -59,15 +58,3 @@ def delete(activity_record_id):
     db.session.delete(record)
     db.session.commit()
     return '', 204
-
-
-def _serialize(record):
-    return {
-        'id':            record.id,
-        'user_id':       record.user_id,
-        'way_id':        record.way_id,
-        'block_id':      record.block_id,
-        'date':          record.date,
-        'notes':         record.notes,
-        'main_asset_id': record.main_asset_id,
-    }
