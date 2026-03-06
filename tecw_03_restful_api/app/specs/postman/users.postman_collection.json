@@ -1,0 +1,109 @@
+{
+  "info": {
+    "_postman_id": "d0d59d33-926e-4aa9-a412-060697d0fc02",
+    "name": "users",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13165791",
+    "_collection_link": "https://go.postman.co/collection/13165791-d0d59d33-926e-4aa9-a412-060697d0fc02?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "get all",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/api/v1/users",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get by id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/api/v1/users/1",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/api/v1/users",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "edit",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/api/v1/users/1",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/api/v1/users/1",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
