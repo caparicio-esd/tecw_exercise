@@ -11,24 +11,40 @@ Routes:
   DELETE /<id>        → delete a place
 """
 
-from flask import Blueprint, jsonify, request
+from typing import Optional
+
+from flask import jsonify
+from flask_openapi3 import APIBlueprint, Tag
+from pydantic import BaseModel
 
 from ..auth.decorators import require_auth
 from ..db import db
 from ..models.places import Place
 from ..dtos.place_dto import PlaceDTO, CreatePlaceDTO, UpdatePlaceDTO
 from .query_utils import apply_list_params
+from .response_models import PlaceListResponse
 
-places_bp = Blueprint('places', __name__)
+_TAG = Tag(name='Places')
+_SECURITY = [{"BearerAuth": []}]
+
+places_bp = APIBlueprint('places', __name__, abp_tags=[_TAG])
 
 
-@places_bp.route('')
-def get_all():
-    """Return a paginated, filterable, sortable list of places.
+class PlacePath(BaseModel):
+    place_id: int
 
-    Filters : name (like)
-    Sort by : id (default), name
-    """
+
+class PlaceQuery(BaseModel):
+    page:     Optional[int] = 1
+    per_page: Optional[int] = 20
+    sort:     Optional[str] = 'id'
+    order:    Optional[str] = 'asc'
+    name:     Optional[str] = None
+
+
+@places_bp.get('', responses={200: PlaceListResponse})
+def get_all(query: PlaceQuery):
+    """Return a paginated, filterable, sortable list of places."""
     items, meta = apply_list_params(
         Place,
         Place.query,
@@ -38,45 +54,43 @@ def get_all():
     return jsonify({'data': [PlaceDTO.from_model(p) for p in items], 'pagination': meta})
 
 
-@places_bp.route('/<int:place_id>')
-def get_by_id(place_id):
-    """Return a single place identified by *place_id*."""
-    return jsonify(PlaceDTO.from_model(Place.query.get_or_404(place_id)))
+@places_bp.get('/<int:place_id>', responses={200: PlaceDTO})
+def get_by_id(path: PlacePath):
+    """Return a single place identified by place_id."""
+    return jsonify(PlaceDTO.from_model(Place.query.get_or_404(path.place_id)))
 
 
-@places_bp.route('', methods=['POST'])
+@places_bp.post('', security=_SECURITY, responses={201: PlaceDTO})
 @require_auth
-def create():
+def create(body: CreatePlaceDTO):
     """Create and persist a new place from the request body."""
-    dto = CreatePlaceDTO.from_request(request.get_json())
     place = Place(
-        name=dto.name,
-        description=dto.description,
-        main_asset_id=dto.main_asset_id,
+        name=body.name,
+        description=body.description,
+        main_asset_id=body.main_asset_id,
     )
     db.session.add(place)
     db.session.commit()
     return jsonify(PlaceDTO.from_model(place)), 201
 
 
-@places_bp.route('/<int:place_id>', methods=['PUT'])
+@places_bp.put('/<int:place_id>', security=_SECURITY, responses={200: PlaceDTO})
 @require_auth
-def update(place_id):
-    """Replace all fields of an existing place identified by *place_id*."""
-    place = Place.query.get_or_404(place_id)
-    dto = UpdatePlaceDTO.from_request(request.get_json())
-    place.name          = dto.name          or place.name
-    place.description   = dto.description   or place.description
-    place.main_asset_id = dto.main_asset_id if dto.main_asset_id is not None else place.main_asset_id
+def update(path: PlacePath, body: UpdatePlaceDTO):
+    """Replace fields of an existing place identified by place_id."""
+    place = Place.query.get_or_404(path.place_id)
+    place.name          = body.name          or place.name
+    place.description   = body.description   or place.description
+    place.main_asset_id = body.main_asset_id if body.main_asset_id is not None else place.main_asset_id
     db.session.commit()
     return jsonify(PlaceDTO.from_model(place))
 
 
-@places_bp.route('/<int:place_id>', methods=['DELETE'])
+@places_bp.delete('/<int:place_id>', security=_SECURITY, responses={204: None})
 @require_auth
-def delete(place_id):
-    """Delete the place identified by *place_id*."""
-    place = Place.query.get_or_404(place_id)
+def delete(path: PlacePath):
+    """Delete the place identified by place_id."""
+    place = Place.query.get_or_404(path.place_id)
     db.session.delete(place)
     db.session.commit()
     return '', 204

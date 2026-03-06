@@ -13,24 +13,43 @@ Routes:
   DELETE /<id>        → delete an activity record
 """
 
-from flask import Blueprint, jsonify, request
+from typing import Optional
+
+from flask import jsonify
+from flask_openapi3 import APIBlueprint, Tag
+from pydantic import BaseModel
 
 from ..auth.decorators import require_auth
 from ..db import db
 from ..models.activity_records import ActivityRecord
 from ..dtos.activity_record_dto import ActivityRecordDTO, CreateActivityRecordDTO
 from .query_utils import apply_list_params
+from .response_models import ActivityRecordListResponse
 
-activity_records_bp = Blueprint('activity_records', __name__)
+_TAG = Tag(name='ActivityRecords')
+_SECURITY = [{"BearerAuth": []}]
+
+activity_records_bp = APIBlueprint('activity_records', __name__, abp_tags=[_TAG])
 
 
-@activity_records_bp.route('')
-def get_all():
-    """Return a paginated, filterable, sortable list of activity records.
+class ActivityRecordPath(BaseModel):
+    activity_record_id: int
 
-    Filters : user_id (exact), way_id (exact), block_id (exact), date (exact)
-    Sort by : id (default), date, user_id
-    """
+
+class ActivityRecordQuery(BaseModel):
+    page:     Optional[int] = 1
+    per_page: Optional[int] = 20
+    sort:     Optional[str] = 'id'
+    order:    Optional[str] = 'asc'
+    user_id:  Optional[int] = None
+    way_id:   Optional[int] = None
+    block_id: Optional[int] = None
+    date:     Optional[str] = None
+
+
+@activity_records_bp.get('', responses={200: ActivityRecordListResponse})
+def get_all(query: ActivityRecordQuery):
+    """Return a paginated, filterable, sortable list of activity records."""
     items, meta = apply_list_params(
         ActivityRecord,
         ActivityRecord.query,
@@ -45,35 +64,34 @@ def get_all():
     return jsonify({'data': [ActivityRecordDTO.from_model(r) for r in items], 'pagination': meta})
 
 
-@activity_records_bp.route('/<int:activity_record_id>')
-def get_by_id(activity_record_id):
-    """Return a single activity record identified by *activity_record_id*."""
-    return jsonify(ActivityRecordDTO.from_model(ActivityRecord.query.get_or_404(activity_record_id)))
+@activity_records_bp.get('/<int:activity_record_id>', responses={200: ActivityRecordDTO})
+def get_by_id(path: ActivityRecordPath):
+    """Return a single activity record identified by activity_record_id."""
+    return jsonify(ActivityRecordDTO.from_model(ActivityRecord.query.get_or_404(path.activity_record_id)))
 
 
-@activity_records_bp.route('', methods=['POST'])
+@activity_records_bp.post('', security=_SECURITY, responses={201: ActivityRecordDTO})
 @require_auth
-def create():
+def create(body: CreateActivityRecordDTO):
     """Create and persist a new activity record from the request body."""
-    dto = CreateActivityRecordDTO.from_request(request.get_json())
     record = ActivityRecord(
-        user_id=dto.user_id,
-        way_id=dto.way_id,
-        block_id=dto.block_id,
+        user_id=body.user_id,
+        way_id=body.way_id,
+        block_id=body.block_id,
         date=db.func.current_date(),
-        notes=dto.notes,
-        main_asset_id=dto.main_asset_id,
+        notes=body.notes,
+        main_asset_id=body.main_asset_id,
     )
     db.session.add(record)
     db.session.commit()
     return jsonify(ActivityRecordDTO.from_model(record)), 201
 
 
-@activity_records_bp.route('/<int:activity_record_id>', methods=['DELETE'])
+@activity_records_bp.delete('/<int:activity_record_id>', security=_SECURITY, responses={204: None})
 @require_auth
-def delete(activity_record_id):
-    """Delete the activity record identified by *activity_record_id*."""
-    record = ActivityRecord.query.get_or_404(activity_record_id)
+def delete(path: ActivityRecordPath):
+    """Delete the activity record identified by activity_record_id."""
+    record = ActivityRecord.query.get_or_404(path.activity_record_id)
     db.session.delete(record)
     db.session.commit()
     return '', 204

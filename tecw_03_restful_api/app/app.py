@@ -8,9 +8,10 @@ import logging
 import os
 
 import click
-from flask import Flask, jsonify
+from flask import jsonify
 from flask.cli import with_appcontext
 from flask_migrate import Migrate
+from flask_openapi3 import OpenAPI, Info, SecurityScheme, Tag
 from pydantic import ValidationError
 
 from .blueprints.activity_records import activity_records_bp
@@ -25,8 +26,14 @@ from .models import User, Way, Block, Place, Asset, ActivityRecord, RefreshToken
 
 logging.basicConfig(level=logging.DEBUG)
 
-app = Flask(
-    __name__
+info = Info(title="TECW API", version="1.0.0")
+security_schemes = {"BearerAuth": SecurityScheme(type="http", scheme="bearer")}
+
+app = OpenAPI(
+    __name__,
+    info=info,
+    security_schemes=security_schemes,
+    doc_prefix="/docs",
 )
 
 app.secret_key = '1234'
@@ -41,13 +48,13 @@ migrate = Migrate(app, db)
 # Blueprints
 # ---------------------------------------------------------------------------
 
-app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
-app.register_blueprint(blocks_bp, url_prefix="/api/v1/blocks")
-app.register_blueprint(users_bp, url_prefix="/api/v1/users")
-app.register_blueprint(ways_bp, url_prefix="/api/v1/ways")
-app.register_blueprint(places_bp, url_prefix="/api/v1/places")
-app.register_blueprint(assets_bp, url_prefix="/api/v1/assets")
-app.register_blueprint(activity_records_bp, url_prefix="/api/v1/activity-records")
+app.register_api(auth_bp, url_prefix="/api/v1/auth")
+app.register_api(blocks_bp, url_prefix="/api/v1/blocks")
+app.register_api(users_bp, url_prefix="/api/v1/users")
+app.register_api(ways_bp, url_prefix="/api/v1/ways")
+app.register_api(places_bp, url_prefix="/api/v1/places")
+app.register_api(assets_bp, url_prefix="/api/v1/assets")
+app.register_api(activity_records_bp, url_prefix="/api/v1/activity-records")
 
 
 # ---------------------------------------------------------------------------

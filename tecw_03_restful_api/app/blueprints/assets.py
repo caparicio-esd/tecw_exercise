@@ -13,24 +13,40 @@ Routes:
   DELETE /<id>        → delete an asset record
 """
 
-from flask import Blueprint, jsonify, request
+from typing import Optional
+
+from flask import jsonify
+from flask_openapi3 import APIBlueprint, Tag
+from pydantic import BaseModel
 
 from ..auth.decorators import require_auth
 from ..db import db
 from ..models.assets import Asset
 from ..dtos.asset_dto import AssetDTO, CreateAssetDTO
 from .query_utils import apply_list_params
+from .response_models import AssetListResponse
 
-assets_bp = Blueprint('assets', __name__)
+_TAG = Tag(name='Assets')
+_SECURITY = [{"BearerAuth": []}]
+
+assets_bp = APIBlueprint('assets', __name__, abp_tags=[_TAG])
 
 
-@assets_bp.route('')
-def get_all():
-    """Return a paginated, filterable, sortable list of assets.
+class AssetPath(BaseModel):
+    asset_id: int
 
-    Filters : url (like)
-    Sort by : id (default), url
-    """
+
+class AssetQuery(BaseModel):
+    page:     Optional[int] = 1
+    per_page: Optional[int] = 20
+    sort:     Optional[str] = 'id'
+    order:    Optional[str] = 'asc'
+    url:      Optional[str] = None
+
+
+@assets_bp.get('', responses={200: AssetListResponse})
+def get_all(query: AssetQuery):
+    """Return a paginated, filterable, sortable list of assets."""
     items, meta = apply_list_params(
         Asset,
         Asset.query,
@@ -40,28 +56,27 @@ def get_all():
     return jsonify({'data': [AssetDTO.from_model(a) for a in items], 'pagination': meta})
 
 
-@assets_bp.route('/<int:asset_id>')
-def get_by_id(asset_id):
-    """Return a single asset identified by *asset_id*."""
-    return jsonify(AssetDTO.from_model(Asset.query.get_or_404(asset_id)))
+@assets_bp.get('/<int:asset_id>', responses={200: AssetDTO})
+def get_by_id(path: AssetPath):
+    """Return a single asset identified by asset_id."""
+    return jsonify(AssetDTO.from_model(Asset.query.get_or_404(path.asset_id)))
 
 
-@assets_bp.route('', methods=['POST'])
+@assets_bp.post('', security=_SECURITY, responses={201: AssetDTO})
 @require_auth
-def create():
+def create(body: CreateAssetDTO):
     """Register a new asset from the request body."""
-    dto = CreateAssetDTO.from_request(request.get_json())
-    asset = Asset(url=dto.url)
+    asset = Asset(url=body.url)
     db.session.add(asset)
     db.session.commit()
     return jsonify(AssetDTO.from_model(asset)), 201
 
 
-@assets_bp.route('/<int:asset_id>', methods=['DELETE'])
+@assets_bp.delete('/<int:asset_id>', security=_SECURITY, responses={204: None})
 @require_auth
-def delete(asset_id):
-    """Delete the asset identified by *asset_id*."""
-    asset = Asset.query.get_or_404(asset_id)
+def delete(path: AssetPath):
+    """Delete the asset identified by asset_id."""
+    asset = Asset.query.get_or_404(path.asset_id)
     db.session.delete(asset)
     db.session.commit()
     return '', 204
