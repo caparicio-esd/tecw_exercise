@@ -1,9 +1,16 @@
+"""
+models/seeders/ways.py — Way seeder.
+
+Reads fixture data from data.py and inserts Way records into the database.
+"""
+
 from ...data import WAYS
 from ...db import db
 from ..ways import Way
 
 
 def seed_ways():
+    """Insert all ways from the WAYS fixture into the database."""
     for w in WAYS:
         way = Way(
             name=w['name'],
@@ -17,4 +24,4 @@ def seed_ways():
         )
         db.session.add(way)
     db.session.commit()
-    print(f"{len(WAYS)} vías insertadas")
+    print(f"{len(WAYS)} ways inserted")

@@ -1,3 +1,11 @@
+"""
+data.py — Fixture data used by seeders.
+
+Contains the initial dataset for BLOCKS, WAYS and USERS.
+These lists are consumed by the seeder functions to populate
+the database on first setup.
+"""
+
 BLOCKS = [
     {"id": 1, "name": "Bloque Alpha", "grade": "V3", "color": "#e74c3c", "sector": "A", "height": 4.0,
      "city": "madrid", "active": True, "picture": None,
