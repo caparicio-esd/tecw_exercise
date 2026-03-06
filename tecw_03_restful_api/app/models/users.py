@@ -32,7 +32,9 @@ class User(db.Model):
     role          = db.Column(user_roles, default='user')
     main_asset_id = db.Column(db.Integer, db.ForeignKey('assets.id'), nullable=True)
 
-    assets = db.relationship('Asset', secondary=user_assets, backref='users', lazy='dynamic')
+    assets           = db.relationship('Asset', secondary=user_assets, backref='users', lazy='dynamic')
+    main_asset       = db.relationship('Asset', foreign_keys=[main_asset_id], viewonly=True)
+    activity_records = db.relationship('ActivityRecord', foreign_keys='[ActivityRecord.user_id]', viewonly=True)
 
     def __repr__(self):
         return f"<User {self.name} ({self.role})>"

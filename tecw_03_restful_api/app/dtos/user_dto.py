@@ -2,38 +2,55 @@
 dtos/user_dto.py — Data Transfer Objects for User.
 
 Classes:
-  UserDTO       — outbound: model → JSON (camelCase), validated with Pydantic
-  CreateUserDTO — inbound:  JSON → new model, validated with Pydantic
-  UpdateUserDTO — inbound:  JSON → update existing model, validated with Pydantic
+  UserSummaryDTO — minimal user info for embedding inside activity records
+  UserDTO        — outbound: model → JSON (camelCase), with resolved relations
+  CreateUserDTO  — inbound:  JSON → new model, validated with Pydantic
+  UpdateUserDTO  — inbound:  JSON → update existing model, validated with Pydantic
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
 
+from .asset_dto import AssetDTO
+
 _VALID_ROLES = ('admin', 'user')
+
+_CONFIG = ConfigDict(
+    from_attributes=True,
+    alias_generator=to_camel,
+    populate_by_name=True,
+)
+
+
+class UserSummaryDTO(BaseModel):
+    """Minimal user representation for embedding inside other DTOs (avoids circular nesting)."""
+
+    model_config = _CONFIG
+
+    id:     int
+    name:   str
+    avatar: str
 
 
 class UserDTO(BaseModel):
-    """Outbound representation of a User (model → JSON)."""
+    """Full outbound representation of a User (model → JSON)."""
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        alias_generator=to_camel,
-        populate_by_name=True,
-    )
+    model_config = _CONFIG
 
-    id:            int
-    name:          str
-    email:         str
-    avatar:        str
-    level:         int
-    member_since:  str
-    sessions:      int
-    active:        bool
-    role:          str
-    main_asset_id: Optional[int] = None
+    id:              int
+    name:            str
+    email:           str
+    avatar:          str
+    level:           int
+    member_since:    str
+    sessions:        int
+    active:          bool
+    role:            str
+    main_asset:      Optional[AssetDTO] = None
+    # Forward reference — resolved by activity_record_dto.model_rebuild() at import time
+    activity_records: List['ActivityRecordForUserDTO'] = []
 
     @classmethod
     def from_model(cls, user) -> dict:

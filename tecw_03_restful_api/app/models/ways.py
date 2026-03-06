@@ -37,7 +37,9 @@ class Way(db.Model):
     description   = db.Column(db.Text, nullable=True)
     main_asset_id = db.Column(db.Integer, db.ForeignKey('assets.id'), nullable=True)
 
-    assets = db.relationship('Asset', secondary=way_assets, backref='ways', lazy='dynamic')
+    assets           = db.relationship('Asset', secondary=way_assets, backref='ways', lazy='dynamic')
+    main_asset       = db.relationship('Asset', foreign_keys=[main_asset_id], viewonly=True)
+    activity_records = db.relationship('ActivityRecord', foreign_keys='[ActivityRecord.way_id]', viewonly=True)
 
     def __repr__(self):
         return f"<Way {self.name} ({self.grade})>"

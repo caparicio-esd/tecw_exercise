@@ -60,7 +60,7 @@ def update(user_id):
     """Replace all fields of an existing user identified by *user_id*."""
     user = User.query.get_or_404(user_id)
     dto = UpdateUserDTO.from_request(request.get_json())
-    user.name          = dto.name          or user.name
+    user.name          = dto.name          or user.nameque
     user.email         = dto.email         or user.email
     user.member_since  = dto.member_since  or user.member_since
     user.avatar        = dto.avatar        or user.avatar

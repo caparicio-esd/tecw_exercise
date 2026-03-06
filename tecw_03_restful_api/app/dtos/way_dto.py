@@ -2,15 +2,18 @@
 dtos/way_dto.py — Data Transfer Objects for Way.
 
 Classes:
-  WayDTO       — outbound: model → JSON (camelCase), validated with Pydantic
-  CreateWayDTO — inbound:  JSON → new model, validated with Pydantic
-  UpdateWayDTO — inbound:  JSON → update existing model, validated with Pydantic
+  WaySummaryDTO  — minimal way info for embedding inside activity records
+  WayDTO         — outbound: model → JSON (camelCase), with resolved relations
+  CreateWayDTO   — inbound:  JSON → new model, validated with Pydantic
+  UpdateWayDTO   — inbound:  JSON → update existing model, validated with Pydantic
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
+
+from .asset_dto import AssetDTO
 
 _VALID_GRADES = (
     '3', '4a', '4b', '4c',
@@ -21,25 +24,42 @@ _VALID_GRADES = (
 )
 _VALID_TYPES = ('deportiva', 'top-rope', 'boulder')
 
+_CONFIG = ConfigDict(
+    from_attributes=True,
+    alias_generator=to_camel,
+    populate_by_name=True,
+)
+
+
+class WaySummaryDTO(BaseModel):
+    """Minimal way representation for embedding inside activity records (avoids circular nesting)."""
+
+    model_config = _CONFIG
+
+    id:         int
+    name:       str
+    grade:      str
+    type:       str
+    city:       str
+    main_asset: Optional[AssetDTO] = None
+
 
 class WayDTO(BaseModel):
-    """Outbound representation of a Way (model → JSON)."""
+    """Full outbound representation of a Way (model → JSON)."""
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        alias_generator=to_camel,
-        populate_by_name=True,
-    )
+    model_config = _CONFIG
 
-    id:            int
-    name:          str
-    grade:         str
-    type:          str
-    length:        int
-    city:          str
-    active:        bool
-    description:   Optional[str] = None
-    main_asset_id: Optional[int] = None
+    id:          int
+    name:        str
+    grade:       str
+    type:        str
+    length:      int
+    city:        str
+    active:      bool
+    description: Optional[str]    = None
+    main_asset:  Optional[AssetDTO] = None
+    # Forward reference — resolved by activity_record_dto.model_rebuild() at import time
+    activity_records: List['ActivityRecordForWayDTO'] = []
 
     @classmethod
     def from_model(cls, way) -> dict:

@@ -20,7 +20,8 @@ class Place(db.Model):
     description   = db.Column(db.Text, nullable=True)
     main_asset_id = db.Column(db.Integer, db.ForeignKey('assets.id'), nullable=True)
 
-    assets = db.relationship('Asset', secondary=place_assets, backref='places', lazy='dynamic')
+    assets     = db.relationship('Asset', secondary=place_assets, backref='places', lazy='dynamic')
+    main_asset = db.relationship('Asset', foreign_keys=[main_asset_id], viewonly=True)
 
     def __repr__(self):
         return f'<Place {self.name}>'

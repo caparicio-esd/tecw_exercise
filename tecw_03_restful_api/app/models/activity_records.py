@@ -24,7 +24,11 @@ class ActivityRecord(db.Model):
     main_asset_id = db.Column(db.Integer, db.ForeignKey('assets.id'), nullable=True)
     notes         = db.Column(db.Text, nullable=True)
 
-    assets = db.relationship('Asset', secondary=activity_record_assets, backref='activity_records', lazy='dynamic')
+    assets     = db.relationship('Asset', secondary=activity_record_assets, backref='activity_records', lazy='dynamic')
+    user       = db.relationship('User',  foreign_keys=[user_id],       viewonly=True)
+    way        = db.relationship('Way',   foreign_keys=[way_id],        viewonly=True)
+    block      = db.relationship('Block', foreign_keys=[block_id],      viewonly=True)
+    main_asset = db.relationship('Asset', foreign_keys=[main_asset_id], viewonly=True)
 
     def __repr__(self):
         return f"<ActivityRecord user={self.user_id} date={self.date}>"

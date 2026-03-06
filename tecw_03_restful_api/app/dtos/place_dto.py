@@ -12,6 +12,8 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
+from .asset_dto import AssetDTO
+
 
 class PlaceDTO(BaseModel):
     """Outbound representation of a Place (model → JSON)."""
@@ -22,10 +24,10 @@ class PlaceDTO(BaseModel):
         populate_by_name=True,
     )
 
-    id:            int
-    name:          str
-    description:   Optional[str] = None
-    main_asset_id: Optional[int] = None
+    id:          int
+    name:        str
+    description: Optional[str]    = None
+    main_asset:  Optional[AssetDTO] = None
 
     @classmethod
     def from_model(cls, place) -> dict:

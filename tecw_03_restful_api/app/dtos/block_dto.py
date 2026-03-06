@@ -2,16 +2,19 @@
 dtos/block_dto.py — Data Transfer Objects for Block.
 
 Classes:
-  BlockDTO       — outbound: model → JSON (camelCase), validated with Pydantic
-  CreateBlockDTO — inbound:  JSON → new model, validated with Pydantic
-  UpdateBlockDTO — inbound:  JSON → update existing model, validated with Pydantic
+  BlockSummaryDTO — minimal block info for embedding inside activity records
+  BlockDTO        — outbound: model → JSON (camelCase), with resolved relations
+  CreateBlockDTO  — inbound:  JSON → new model, validated with Pydantic
+  UpdateBlockDTO  — inbound:  JSON → update existing model, validated with Pydantic
 """
 
 import re
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
+
+from .asset_dto import AssetDTO
 
 _VALID_GRADES = (
     'VB', 'V0', 'V1', 'V2', 'V3', 'V4',
@@ -20,26 +23,43 @@ _VALID_GRADES = (
 )
 _HEX_COLOR_RE = re.compile(r'^#[0-9a-fA-F]{6}$')
 
+_CONFIG = ConfigDict(
+    from_attributes=True,
+    alias_generator=to_camel,
+    populate_by_name=True,
+)
+
+
+class BlockSummaryDTO(BaseModel):
+    """Minimal block representation for embedding inside activity records (avoids circular nesting)."""
+
+    model_config = _CONFIG
+
+    id:         int
+    name:       str
+    grade:      str
+    color:      str
+    city:       str
+    main_asset: Optional[AssetDTO] = None
+
 
 class BlockDTO(BaseModel):
-    """Outbound representation of a Block (model → JSON)."""
+    """Full outbound representation of a Block (model → JSON)."""
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        alias_generator=to_camel,
-        populate_by_name=True,
-    )
+    model_config = _CONFIG
 
-    id:            int
-    name:          str
-    grade:         str
-    color:         str
-    sector:        str
-    height:        float
-    city:          str
-    active:        bool
-    description:   Optional[str]  = None
-    main_asset_id: Optional[int]  = None
+    id:          int
+    name:        str
+    grade:       str
+    color:       str
+    sector:      str
+    height:      float
+    city:        str
+    active:      bool
+    description: Optional[str]    = None
+    main_asset:  Optional[AssetDTO] = None
+    # Forward reference — resolved by activity_record_dto.model_rebuild() at import time
+    activity_records: List['ActivityRecordForBlockDTO'] = []
 
     @classmethod
     def from_model(cls, block) -> dict:
