@@ -6,9 +6,10 @@ sets up the database, migration engine, CLI commands and error handlers.
 """
 import logging
 import os
+import subprocess
 
 import click
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from flask.cli import with_appcontext
 from flask_migrate import Migrate
 from flask_openapi3 import OpenAPI, Info, SecurityScheme, Tag
@@ -93,8 +94,41 @@ def reset_db():
     db.create_all()
 
 
+_REACT_DIR  = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'tecw_04_react'))
+_REACT_DIST = os.path.join(_REACT_DIR, 'dist')
+
+
+@click.command(name='build-ui')
+@with_appcontext
+def build_ui():
+    """Build the React frontend and make it available at /."""
+    click.echo(f'Building React app at {_REACT_DIR} …')
+    result = subprocess.run(['npm', 'run', 'build'], cwd=_REACT_DIR)
+    if result.returncode != 0:
+        raise click.ClickException('npm build failed')
+    click.echo('Done — React app built successfully.')
+
+
 app.cli.add_command(seed)
 app.cli.add_command(reset_db)
+app.cli.add_command(build_ui)
+
+# ---------------------------------------------------------------------------
+# SPA — serve the React build at /
+# Must be registered after all API blueprints so it only catches unknown paths.
+# ---------------------------------------------------------------------------
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_spa(path):
+    """Serve the React SPA. API and docs routes are matched first by Flask."""
+    if not os.path.isdir(_REACT_DIST):
+        return jsonify({'error': 'Frontend not built. Run: flask build-ui'}), 503
+    # Serve an existing file (JS, CSS, images…) or fall back to index.html (SPA routing).
+    target = os.path.join(_REACT_DIST, path)
+    if path and os.path.isfile(target):
+        return send_from_directory(_REACT_DIST, path)
+    return send_from_directory(_REACT_DIST, 'index.html')
 
 # ---------------------------------------------------------------------------
 # Let's go

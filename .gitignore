@@ -16,6 +16,10 @@ develop-eggs/
 lib/
 lib64/
 wheels/
+node_modules/
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
 
 # ── Virtual environments ──────────────────────────────────────────────────────
 .venv/

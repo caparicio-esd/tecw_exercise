@@ -1,31 +1,38 @@
-# TecW Rocódromo API
+# TecW Rocódromo
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?logo=sqlalchemy&logoColor=white)
 ![Pydantic](https://img.shields.io/badge/Pydantic-2.12-E92063?logo=pydantic&logoColor=white)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-6BA539?logo=openapiinitiative&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![TanStack](https://img.shields.io/badge/TanStack-Router%20%2B%20Query%20%2B%20Table-FF4154?logo=reactquery&logoColor=white)
 ![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)
 ![SQLite](https://img.shields.io/badge/DB-SQLite-003B57?logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-REST API for managing a climbing gym: sport routes (vías), bouldering problems (bloques), locations (sectores), media (assets) and members (usuarios).
+Full-stack application for managing a climbing gym: sport routes (vías), bouldering problems (bloques), locations (sectores), media (assets) and members (usuarios).
 
-Built with **Flask + flask-openapi3 + SQLAlchemy + Pydantic**.
+**Backend:** Flask REST API with OpenAPI 3.1 auto-docs, JWT authentication and SQLAlchemy ORM.
+**Frontend:** React SPA with TanStack Router, TanStack Query and TanStack Table, styled with shadcn/ui + Tailwind CSS.
 
 ---
-<img src="./banner.jpg" alt="">
+
+<img src="static/banner.jpg" alt="">
 
 ---
 
 ## Table of contents
 
 1. [Project structure](#project-structure)
-2. [Setup](#setup)
-3. [Running the server](#running-the-server)
-4. [Interactive documentation](#interactive-documentation)
-5. [Authentication](#authentication)
-6. [API reference](#api-reference)
+2. [Backend setup](#backend-setup)
+3. [Frontend setup](#frontend-setup)
+4. [Running the application](#running-the-application)
+   - [Development mode](#development-mode)
+   - [Production mode](#production-mode)
+5. [Interactive API documentation](#interactive-api-documentation)
+6. [Authentication](#authentication)
+7. [API reference](#api-reference)
    - [Auth](#auth)
    - [Ways](#ways-apiv1ways)
    - [Blocks](#blocks-apiv1blocks)
@@ -33,10 +40,10 @@ Built with **Flask + flask-openapi3 + SQLAlchemy + Pydantic**.
    - [Assets](#assets-apiv1assets)
    - [Users](#users-apiv1users)
    - [Activity Records](#activity-records-apiv1activity-records)
-7. [Common query parameters](#common-query-parameters)
-8. [Error responses](#error-responses)
-9. [Database management](#database-management)
-10. [Roles and permissions](#roles-and-permissions)
+8. [Common query parameters](#common-query-parameters)
+9. [Error responses](#error-responses)
+10. [Database management](#database-management)
+11. [Roles and permissions](#roles-and-permissions)
 
 ---
 
@@ -45,33 +52,49 @@ Built with **Flask + flask-openapi3 + SQLAlchemy + Pydantic**.
 ```
 tecw_yo/
 ├── tecw_02_flask/               # Phase 2 — server-rendered Jinja2 app
-└── tecw_03_restful_api/         # Phase 3 — JSON REST API  ← current
-    └── app/
-        ├── app.py               # Application factory & entry point
-        ├── db.py                # SQLAlchemy instance
-        ├── auth/
-        │   ├── decorators.py    # @require_auth, @require_role
-        │   └── tokens.py        # JWT + refresh token logic
-        ├── blueprints/          # One file per resource
-        │   ├── ways.py
-        │   ├── blocks.py
-        │   ├── places.py
-        │   ├── assets.py
-        │   ├── users.py
-        │   ├── activity_records.py
-        │   ├── auth.py
-        │   ├── query_utils.py   # Shared pagination / filter / sort helper
-        │   └── response_models.py  # OpenAPI response wrappers
-        ├── dtos/                # Pydantic models — validation & serialisation
-        ├── models/              # SQLAlchemy ORM models
-        ├── migrations/          # Alembic migrations
-        ├── seeders/             # DB seed scripts
-        └── fixtures/            # Raw fixture data
+├── tecw_03_restful_api/         # Phase 3 — JSON REST API (backend)
+│   └── app/
+│       ├── app.py               # Application factory, CLI commands, SPA serving
+│       ├── db.py                # SQLAlchemy instance
+│       ├── auth/
+│       │   ├── decorators.py    # @require_auth, @require_role
+│       │   └── tokens.py        # JWT + refresh token logic
+│       ├── blueprints/          # One file per resource
+│       │   ├── ways.py
+│       │   ├── blocks.py
+│       │   ├── places.py
+│       │   ├── assets.py
+│       │   ├── users.py
+│       │   ├── activity_records.py
+│       │   ├── auth.py
+│       │   ├── query_utils.py   # Shared pagination / filter / sort helper
+│       │   └── response_models.py  # OpenAPI response wrappers
+│       ├── dtos/                # Pydantic models — validation & serialisation
+│       ├── models/              # SQLAlchemy ORM models
+│       ├── migrations/          # Alembic migrations
+│       ├── seeders/             # DB seed scripts
+│       └── fixtures/            # Raw fixture data
+└── tecw_04_react/               # Phase 4 — React SPA (frontend)
+    └── src/
+        ├── lib/
+        │   ├── api.ts           # Typed fetch client for all resources
+        │   └── utils.ts         # shadcn cn() helper
+        ├── components/
+        │   ├── Layout.tsx       # Top nav with active link highlighting
+        │   ├── DataTable.tsx    # Generic TanStack Table wrapper
+        │   ├── Detail.tsx       # BackLink, InfoCard, Field, AssetPreview
+        │   └── ui/              # shadcn primitives (Table, Badge)
+        └── pages/
+            ├── WaysPage.tsx / WayDetailPage.tsx
+            ├── BlocksPage.tsx / BlockDetailPage.tsx
+            ├── PlacesPage.tsx / PlaceDetailPage.tsx
+            ├── UsersPage.tsx / UserDetailPage.tsx
+            └── ActivityRecordsPage.tsx / ActivityRecordDetailPage.tsx
 ```
 
 ---
 
-## Setup
+## Backend setup
 
 **1. Create and activate a virtual environment**
 
@@ -81,46 +104,108 @@ source .venv/bin/activate      # macOS / Linux
 .venv\Scripts\activate         # Windows
 ```
 
-**2. Install dependencies**
+**2. Install Python dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. (Optional) Set a JWT secret for production**
+**3. Apply database migrations and seed data**
+
+```bash
+flask --app tecw_03_restful_api/app/app.py db upgrade
+flask --app tecw_03_restful_api/app/app.py seed
+```
+
+> Default admin account: **`admin@tecw.es`** / **`password`**
+
+**4. (Optional) Set a JWT secret for production**
 
 ```bash
 export JWT_SECRET="replace-with-a-long-random-string"
 ```
 
-> If not set, the app falls back to an insecure dev default. Never use the default in production.
+> If not set, the app falls back to an insecure dev default. Never use it in production.
 
 ---
 
-## Running the server
+## Frontend setup
+<img src="static/frontend.png" alt="">
+
 
 ```bash
-flask --app tecw_03_restful_api/app/app.py run --debug
+cd tecw_04_react
+npm install
 ```
-
-Server starts at `http://127.0.0.1:5000`.
 
 ---
 
-## Interactive documentation
+## Running the application
 
-The API ships with multiple documentation UIs powered by **flask-openapi3**. All of them read the same `openapi.json` spec generated automatically from the Pydantic DTOs.
+### Development mode
+
+Run the backend and frontend servers independently so that Vite's hot-reload works:
+
+**Terminal 1 — Flask API (port 3000)**
+
+```bash
+flask --app tecw_03_restful_api/app/app.py run --debug --port 3000
+```
+
+**Terminal 2 — React dev server (port 5173)**
+
+```bash
+cd tecw_04_react
+npm run dev
+```
+
+Open `http://localhost:5173`. Vite proxies all `/api` requests to Flask on port 3000 automatically — no CORS configuration needed.
+
+---
+
+### Production mode
+
+Build the React app and serve everything from a single Flask process:
+
+```bash
+# 1. Build the React SPA
+flask --app tecw_03_restful_api/app/app.py build-ui
+
+# 2. Run Flask (serves API + compiled frontend)
+flask --app tecw_03_restful_api/app/app.py run --port 3000
+```
+
+| URL | Description |
+|---|---|
+| `http://localhost:3000/` | React SPA |
+| `http://localhost:3000/ways` | SPA route (served as index.html) |
+| `http://localhost:3000/api/v1/ways` | REST API |
+| `http://localhost:3000/docs` | Swagger UI |
+
+Flask serves API and docs routes with priority. Any path that is not an API route or a known static file falls through to `index.html`, enabling full client-side routing.
+
+If `build-ui` has not been run yet, requesting `/` returns a `503` with a helpful message:
+
+```json
+{ "error": "Frontend not built. Run: flask build-ui" }
+```
+
+---
+
+## Interactive API documentation
+
+All UIs read the same OpenAPI 3.1 spec generated automatically from the Pydantic DTOs.
 
 | URL | UI |
 |---|---|
-| `http://localhost:5000/docs` | Swagger UI |
-| `http://localhost:5000/docs/redoc` | Redoc |
-| `http://localhost:5000/docs/rapidoc` | RapiDoc |
-| `http://localhost:5000/docs/scalar` | Scalar |
-| `http://localhost:5000/docs/elements` | Elements |
-| `http://localhost:5000/docs/openapi.json` | Raw OpenAPI 3.1 spec |
+| `http://localhost:3000/docs` | Swagger UI |
+| `http://localhost:3000/docs/redoc` | Redoc |
+| `http://localhost:3000/docs/rapidoc` | RapiDoc |
+| `http://localhost:3000/docs/scalar` | Scalar |
+| `http://localhost:3000/docs/elements` | Elements |
+| `http://localhost:3000/docs/openapi.json` | Raw OpenAPI 3.1 spec |
 
-To authorise requests from any UI, click **Authorize**, paste the `access_token` value (without the `Bearer ` prefix) and confirm. All subsequent requests will include the `Authorization: Bearer …` header automatically.
+To authorise requests from any UI, click **Authorize**, paste the `access_token` (without the `Bearer ` prefix) and confirm. All subsequent requests will include the header automatically.
 
 ---
 
@@ -156,14 +241,12 @@ Content-Type: application/json
 
 | Field | Description |
 |---|---|
-| `access_token` | JWT to include in `Authorization` header |
+| `access_token` | JWT to include in the `Authorization` header |
 | `token_type` | Always `Bearer` |
-| `expires_in` | Seconds until the access token expires (900 = 15 min) |
+| `expires_in` | Seconds until expiry (900 = 15 min) |
 | `refresh_token` | Opaque token — store securely, valid for 30 days |
 
 ### Step 2 — Authenticate requests
-
-Add the `Authorization` header to every protected endpoint:
 
 ```http
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -171,12 +254,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Step 3 — Refresh the token
 
-When the access token expires (`401 Unauthorized`), obtain a new pair without re-entering credentials:
-
-```http
-POST /api/v1/auth/token
-Content-Type: application/json
-```
+When the access token expires (`401`), obtain a new pair without re-entering credentials:
 
 ```json
 {
@@ -185,11 +263,9 @@ Content-Type: application/json
 }
 ```
 
-> Each refresh token can only be used **once**. A new refresh token is returned alongside the new access token.
+> Each refresh token can only be used **once**. A new one is issued alongside the new access token.
 
 ### Step 4 — Revoke a refresh token
-
-Call this on logout to invalidate the stored refresh token immediately:
 
 ```http
 POST /api/v1/auth/revoke
@@ -197,16 +273,14 @@ Content-Type: application/json
 ```
 
 ```json
-{
-  "token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-}
+{ "token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..." }
 ```
 
 ---
 
 ## API reference
 
-Base URL: `http://localhost:5000/api/v1`
+Base URL: `http://localhost:3000/api/v1`
 
 All request and response bodies are **JSON** (`Content-Type: application/json`).
 List endpoints return a paginated envelope:
@@ -236,12 +310,12 @@ List endpoints return a paginated envelope:
 
 ### Ways `/api/v1/ways`
 
-A **way** (vía) is a sport climbing route or top-rope route at the gym.
+A **way** (vía) is a sport climbing route or top-rope route. Graded on the French sport climbing scale.
 
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
 | `GET` | `/ways` | — | List ways |
-| `GET` | `/ways/{id}` | — | Get a single way |
+| `GET` | `/ways/{id}` | — | Get a way with its activity records |
 | `POST` | `/ways` | Bearer | Create a way |
 | `PUT` | `/ways/{id}` | Bearer | Update a way |
 | `DELETE` | `/ways/{id}` | Bearer | Delete a way |
@@ -284,7 +358,7 @@ A **block** (bloque) is a bouldering problem. Graded on the Hueco / V-scale.
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
 | `GET` | `/blocks` | — | List blocks |
-| `GET` | `/blocks/{id}` | — | Get a single block |
+| `GET` | `/blocks/{id}` | — | Get a block with its activity records |
 | `POST` | `/blocks` | Bearer | Create a block |
 | `PUT` | `/blocks/{id}` | Bearer | Update a block |
 | `DELETE` | `/blocks/{id}` | Bearer | Delete a block |
@@ -324,7 +398,7 @@ A **block** (bloque) is a bouldering problem. Graded on the Hueco / V-scale.
 
 ### Places `/api/v1/places`
 
-A **place** (sector / ubicación) groups ways or blocks into a named location within the gym.
+A **place** (sector / ubicación) is a named location within the gym.
 
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
@@ -357,7 +431,7 @@ A **place** (sector / ubicación) groups ways or blocks into a named location wi
 
 ### Assets `/api/v1/assets`
 
-An **asset** is a media file (image or video) referenced by URL. Assets can be attached to any entity via its `mainAssetId` field.
+An **asset** is a media file (image or video) referenced by URL. Attach one to any entity via its `mainAssetId` field.
 
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
@@ -372,9 +446,7 @@ An **asset** is a media file (image or video) referenced by URL. Assets can be a
 **POST body**
 
 ```json
-{
-  "url": "https://cdn.tecw.es/images/la-directa.jpg"
-}
+{ "url": "https://cdn.tecw.es/images/la-directa.jpg" }
 ```
 
 | Field | Type | Required | Constraints |
@@ -388,7 +460,7 @@ An **asset** is a media file (image or video) referenced by URL. Assets can be a
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
 | `GET` | `/users` | — | List users |
-| `GET` | `/users/{id}` | — | Get a single user |
+| `GET` | `/users/{id}` | — | Get a user with their activity records |
 | `POST` | `/users` | Bearer | Create a user |
 | `PUT` | `/users/{id}` | Bearer | Update a user |
 | `DELETE` | `/users/{id}` | Bearer `admin` | Delete a user |
@@ -417,7 +489,7 @@ An **asset** is a media file (image or video) referenced by URL. Assets can be a
 |---|---|:---:|---|
 | `name` | string | ✔ | min 1 char |
 | `email` | string | ✔ | must contain `@` |
-| `password` | string | ✔ | min 6 chars (stored hashed, never returned) |
+| `password` | string | ✔ | min 6 chars — stored hashed, never returned |
 | `memberSince` | string | ✔ | date string |
 | `avatar` | string | — | default `🧗` |
 | `level` | integer | — | ≥ 0, default `0` |
@@ -425,8 +497,6 @@ An **asset** is a media file (image or video) referenced by URL. Assets can be a
 | `active` | boolean | — | default `true` |
 | `role` | string | — | `user` · `admin`, default `user` |
 | `mainAssetId` | integer | — | FK to an existing asset |
-
-> Passwords are hashed server-side with **Werkzeug** and are never included in any response.
 
 ---
 
@@ -436,8 +506,8 @@ An **activity record** logs a climbing session: a user completed a way or a bloc
 
 | Method | Path | Auth | Description |
 |---|---|:---:|---|
-| `GET` | `/activity-records` | — | List activity records |
-| `GET` | `/activity-records/{id}` | — | Get a single record |
+| `GET` | `/activity-records` | — | List records |
+| `GET` | `/activity-records/{id}` | — | Get a record with user, way and block references |
 | `POST` | `/activity-records` | Bearer | Log a new record |
 | `DELETE` | `/activity-records/{id}` | Bearer | Delete a record |
 
@@ -464,7 +534,7 @@ An **activity record** logs a climbing session: a user completed a way or a bloc
 | `notes` | string | — | optional free text |
 | `mainAssetId` | integer | — | FK to an existing asset |
 
-> The `date` field is set automatically to the current server date and is not accepted in the request body.
+> The `date` field is set automatically to the current server date.
 
 ---
 
@@ -480,7 +550,7 @@ All `GET /resource` list endpoints accept:
 | `order` | string | `asc` | `asc` or `desc` |
 | `<filter_field>` | string | — | Resource-specific filter (see each resource) |
 
-**Example — ways paginated, filtered and sorted:**
+**Example:**
 
 ```
 GET /api/v1/ways?page=2&per_page=10&sort=grade&order=desc&city=madrid&active=true
@@ -499,6 +569,7 @@ All errors return a JSON body with at least an `error` field.
 | `403 Forbidden` | Valid token but insufficient role |
 | `404 Not Found` | Resource does not exist |
 | `422 Unprocessable Entity` | Pydantic validation failed — body includes a `details` array |
+| `503 Service Unavailable` | Frontend not built — run `flask build-ui` |
 | `500 Internal Server Error` | Unexpected server error |
 
 **Example 422 response**
@@ -521,41 +592,27 @@ All errors return a JSON body with at least an `error` field.
 
 ## Database management
 
-All commands require `--app tecw_03_restful_api/app/app.py`.
+All commands use `--app tecw_03_restful_api/app/app.py`.
 
-**Apply migrations**
+| Command | Description |
+|---|---|
+| `flask db upgrade` | Apply all pending migrations |
+| `flask db migrate -m "msg"` | Generate a migration from model changes |
+| `flask db downgrade` | Revert the last migration |
+| `flask db downgrade base` | Revert all migrations |
+| `flask db history` | Show full migration history |
+| `flask db current` | Show currently applied revision |
+| `flask seed` | Populate database with fixture data |
+| `flask reset-db` | Drop and recreate all tables (dev only) |
+| `flask build-ui` | Compile the React SPA into `tecw_04_react/dist/` |
 
-```bash
-flask --app tecw_03_restful_api/app/app.py db upgrade
-```
-
-**Seed initial data**
-
-```bash
-flask --app tecw_03_restful_api/app/app.py seed
-```
-
-> Default admin account: `admin@tecw.es` / `password`
-
-**Reset database** (dev only — drops all data)
+**Full reset + reseed:**
 
 ```bash
 flask --app tecw_03_restful_api/app/app.py reset-db
 flask --app tecw_03_restful_api/app/app.py db upgrade
 flask --app tecw_03_restful_api/app/app.py seed
 ```
-
-### Alembic reference
-
-| Command | Description |
-|---|---|
-| `flask db init` | Initialise migrations folder (run once) |
-| `flask db migrate -m "msg"` | Generate migration from model changes |
-| `flask db upgrade` | Apply all pending migrations |
-| `flask db downgrade` | Revert the last migration |
-| `flask db downgrade base` | Revert all migrations |
-| `flask db history` | Show full migration history |
-| `flask db current` | Show currently applied revision |
 
 ---
 
