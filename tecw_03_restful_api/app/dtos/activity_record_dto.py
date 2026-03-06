@@ -41,7 +41,6 @@ class CreateActivityRecordDTO(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     user_id:       int           = Field(gt=0)
-    date:          str           = Field(min_length=1)
     way_id:        Optional[int] = Field(default=None, gt=0)
     block_id:      Optional[int] = Field(default=None, gt=0)
     notes:         Optional[str] = None

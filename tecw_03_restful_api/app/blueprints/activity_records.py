@@ -42,7 +42,7 @@ def create():
         user_id=dto.user_id,
         way_id=dto.way_id,
         block_id=dto.block_id,
-        date=dto.date,
+        date=db.func.current_date(),
         notes=dto.notes,
         main_asset_id=dto.main_asset_id,
     )
